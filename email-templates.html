@@ -1,0 +1,2141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayuse — Customer Journey Email Accounting</title>
+<style>
+:root {
+  --dy-orange:#F5A623; --dy-black:#111; --dy-gray:#6B7280;
+  --dy-border:#E5E7EB; --dy-bg:#F2F2F2;
+  --p1:#0EA5A0; --p1-light:#E6F7F7; --p1-mid:#0EA5A020;
+  --p2:#F59E0B; --p2-light:#FFFBEB; --p2-mid:#F59E0B20;
+  --p3:#EF4444; --p3-light:#FFF1F1; --p3-mid:#EF444420;
+  --p4:#10B981; --p4-light:#F0FDF4; --p4-mid:#10B98120;
+  --p5:#8B5CF6; --p5-light:#F5F3FF; --p5-mid:#8B5CF620;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:var(--dy-bg);color:var(--dy-black);display:flex;flex-direction:column;min-height:100vh;}
+
+/* ── FRISE ── */
+#frise{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--dy-border);box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.frise-inner{display:flex;align-items:stretch;overflow-x:auto;}
+.frise-phase{flex:1;min-width:160px;display:flex;flex-direction:column;cursor:pointer;transition:background .15s;border-right:1px solid var(--dy-border);}
+.frise-phase:last-child{border-right:none;}
+.frise-phase:hover .fp-head{filter:brightness(.92);}
+.fp-head{padding:10px 14px 8px;color:#fff;display:flex;align-items:center;gap:8px;}
+.fp-num{font-size:10px;font-weight:800;letter-spacing:1px;opacity:.8;}
+.fp-title{font-size:11.5px;font-weight:700;line-height:1.3;}
+.fp-emails{padding:6px 14px 8px;display:flex;flex-wrap:wrap;gap:4px;}
+.fp-tag{font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:99px;cursor:pointer;transition:opacity .15s;}
+.fp-tag:hover{opacity:.75;}
+
+/* ── LAYOUT ── */
+.layout{display:flex;flex:1;}
+aside{width:220px;min-width:220px;background:#1A1A1A;position:sticky;top:57px;height:calc(100vh - 57px);overflow-y:auto;display:flex;flex-direction:column;}
+.sb-section{padding:12px 14px 4px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3);}
+.sb-item{display:flex;align-items:center;gap:8px;padding:7px 14px;margin:1px 6px;border-radius:6px;cursor:pointer;font-size:12px;color:rgba(255,255,255,.6);transition:background .12s,color .12s;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,.07);color:#fff;}
+.sb-item.active{color:#fff;}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sb-ref{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:auto;opacity:.7;}
+
+main{flex:1;padding:28px 32px;overflow-y:auto;max-width:calc(100vw - 220px);}
+
+/* ── PHASE HEADER ── */
+.phase-block{margin-bottom:48px;scroll-margin-top:64px;}
+.phase-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:14px 20px;border-radius:10px;border-left:4px solid;}
+.phase-header h2{font-size:15px;font-weight:700;}
+.phase-header p{font-size:12px;opacity:.75;margin-top:2px;}
+.phase-count{margin-left:auto;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;}
+
+/* ── EMAIL CARD ── */
+.email-card{margin-bottom:32px;scroll-margin-top:72px;}
+.card-meta{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+.card-ref{font-size:18px;font-weight:900;letter-spacing:-.5px;flex-shrink:0;width:44px;text-align:center;padding-top:2px;}
+.card-info{flex:1;}
+.card-title{font-size:15px;font-weight:700;color:var(--dy-black);}
+.card-desc{font-size:12px;color:var(--dy-gray);margin-top:3px;line-height:1.5;}
+.card-pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;}
+.pill{font-size:10.5px;padding:2px 8px;border-radius:99px;font-weight:500;border:1px solid;}
+.pill-gray{background:#F3F4F6;color:#374151;border-color:#E5E7EB;}
+.pill-auto{background:#D1FAE5;color:#065F46;border-color:#A7F3D0;}
+.pill-manual{background:#FEF3C7;color:#92400E;border-color:#FDE68A;}
+.pill-new{background:#EDE9FE;color:#5B21B6;border-color:#DDD6FE;}
+.pill-refonte{background:#DBEAFE;color:#1E40AF;border-color:#BFDBFE;}
+.pill-bug{background:#FEE2E2;color:#991B1B;border-color:#FECACA;}
+
+/* urgency dots row */
+.urgency-row{display:flex;gap:3px;margin-top:8px;}
+.u-dot{height:3px;width:18px;border-radius:2px;background:#E5E7EB;}
+.u-dot.on{background:currentColor;}
+
+/* ── EMAIL SHELL ── */
+.email-shell{background:#E0E0E0;border-radius:10px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.subject-bar{background:#fff;border-radius:7px 7px 0 0;padding:10px 14px;border-bottom:1px solid #EBEBEB;font-size:12px;color:var(--dy-gray);display:flex;gap:8px;align-items:baseline;}
+.subject-val{font-weight:600;color:var(--dy-black);font-size:12.5px;}
+.email-body{background:#fff;border-radius:0 0 7px 7px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;}
+
+/* inner email components */
+.e-stripe{height:5px;}
+.e-logobar{padding:20px 28px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #F0F0F0;}
+.e-brand{font-size:18px;font-weight:900;color:#111;letter-spacing:2px;}
+.e-tagline{font-size:8.5px;letter-spacing:2.5px;color:#999;font-weight:600;text-transform:uppercase;}
+.e-body{padding:26px 28px 20px;}
+.e-hi{font-size:14.5px;font-weight:700;color:#111;margin-bottom:14px;}
+.e-p{font-size:13.5px;line-height:1.65;color:#333;margin-bottom:14px;}
+.e-p:last-child{margin-bottom:0;}
+
+.e-box{border-radius:8px;padding:14px 18px;margin:18px 0;border-left:4px solid;}
+.e-box.neutral{background:#FFFBF0;border-color:#F5A623;}
+.e-box.info{background:#F0F7FF;border-color:#3B82F6;}
+.e-box.warn{background:#FFFBEB;border-color:#F59E0B;}
+.e-box.danger{background:#FFF1F1;border-color:#EF4444;}
+.e-box.success{background:#F0FDF4;border-color:#10B981;}
+.e-box.gray{background:#F9FAFB;border-color:#9CA3AF;}
+
+.e-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:12.5px;border-bottom:1px solid rgba(0,0,0,.05);}
+.e-row:last-child{border-bottom:none;padding-bottom:0;}
+.e-lbl{color:#666;}
+.e-val{font-weight:600;color:#111;}
+.e-val.red{color:#EF4444;}
+.e-val.green{color:#10B981;}
+.e-total-row{padding-top:8px;margin-top:4px;border-top:1.5px solid;}
+.e-total-lbl{font-weight:700;color:#111;font-size:13px;}
+.e-total-val{font-size:15px;font-weight:800;}
+
+.e-btn-wrap{margin:20px 0;}
+.e-btn{display:inline-block;padding:12px 26px;border-radius:100px;font-size:13px;font-weight:700;text-decoration:none;cursor:default;border:none;}
+.e-btn.orange{background:#F5A623;color:#111;}
+.e-btn.red{background:#EF4444;color:#fff;}
+.e-btn.green{background:#10B981;color:#fff;}
+.e-btn.teal{background:#0EA5A0;color:#fff;}
+.e-btn.ghost{background:transparent;color:#333;border:1.5px solid #CCC;margin-left:10px;}
+.e-btn.ghost-red{background:transparent;color:#EF4444;border:1.5px solid #FECACA;margin-left:10px;}
+
+.e-warn-strip{background:#FFFBEB;border:1px solid #FDE68A;border-radius:7px;padding:11px 14px;font-size:12.5px;color:#92400E;display:flex;gap:9px;margin:14px 0;}
+.e-warn-strip.red{background:#FFF1F1;border-color:#FECACA;color:#991B1B;}
+.e-warn-icon{flex-shrink:0;font-size:14px;margin-top:1px;}
+
+.e-payment-opt{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #F5F5F5;font-size:12.5px;}
+.e-payment-opt:last-child{border-bottom:none;}
+.e-opt-icon{width:30px;height:30px;border-radius:7px;background:#F5F5F5;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.e-opt-title{font-weight:600;color:#111;font-size:13px;}
+.e-opt-desc{color:#666;font-size:12px;line-height:1.5;margin-top:2px;}
+
+
+/* Direct Debit nudge — prominent strip between CTA and resolution section */
+.e-dd-nudge{display:flex;align-items:center;gap:12px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:12px 16px;margin:16px 0 14px;cursor:default;}
+.e-dd-nudge-icon{font-size:18px;flex-shrink:0;}
+.e-dd-nudge-text{flex:1;font-size:12.5px;color:#1D4ED8;line-height:1.45;}
+.e-dd-nudge-text strong{color:#1E3A8A;}
+.e-dd-nudge-cta{font-size:11px;font-weight:700;background:#1D4ED8;color:#fff;padding:5px 13px;border-radius:99px;white-space:nowrap;flex-shrink:0;letter-spacing:.01em;}
+
+.e-escalade-box{background:linear-gradient(135deg,#FFF7ED,#FFFBF0);border:1px solid #FED7AA;border-radius:9px;padding:14px 18px;margin:16px 0;}
+.e-esc-title{font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.e-esc-text{font-size:13px;color:#78350F;line-height:1.6;}
+
+.e-hr{border:none;border-top:1px solid #F0F0F0;margin:18px 0;}
+
+.e-sign{margin-top:22px;padding-top:16px;border-top:1px solid #F0F0F0;}
+.e-sign-pre{font-size:11.5px;color:#888;line-height:1.55;margin-bottom:12px;}
+.e-sign-name{font-size:12.5px;font-weight:700;color:#111;}
+.e-sign-role{font-size:12px;color:#444;margin-top:3px;}
+.e-sign-contact{font-size:11.5px;color:#888;margin-top:4px;line-height:1.8;}
+.e-sign-contact a{color:#F5A623;text-decoration:none;font-weight:500;}
+
+.e-footer{background:#F9F9F9;padding:16px 28px;border-top:1px solid #EEE;}
+.e-footer-h{font-size:12px;font-weight:700;margin-bottom:3px;}
+.e-footer-links{font-size:11px;color:#666;line-height:1.7;}
+.e-footer-links a{color:#F5A623;text-decoration:underline;}
+.e-legal{font-size:9px;color:#BBB;margin-top:10px;padding-top:10px;border-top:1px solid #E8E8E8;line-height:1.6;}
+
+/* vars */
+var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-radius:4px;font-size:.88em;font-weight:700;border:1px solid #FDE68A;white-space:nowrap;}
+
+/* vars legend */
+.vars-bar{background:#fff;border:1px solid var(--dy-border);border-radius:8px;padding:12px 16px;margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;}
+.vars-label{font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#999;margin-right:6px;}
+
+/* lang badge */
+.lang-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;}
+.lang-fr{background:#DBEAFE;color:#1E40AF;}
+.lang-en{background:#D1FAE5;color:#065F46;}
+
+/* status badge */
+.status-chip{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.3px;}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:2px;}
+
+/* NEW badge */
+.new-ribbon{position:absolute;top:-2px;right:-2px;background:#8B5CF6;color:#fff;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;letter-spacing:.3px;}
+
+.card-ref-wrap{position:relative;display:inline-block;}
+
+/* Phase 1 colors */
+.p1-color{color:var(--p1);}
+.p2-color{color:var(--p2);}
+.p3-color{color:var(--p3);}
+.p4-color{color:var(--p4);}
+.p5-color{color:var(--p5);}
+
+.sla-band{display:flex;align-items:center;gap:0;margin-top:10px;flex-wrap:wrap;gap:4px;}
+.sla-node{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.sla-tag{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:99px;}
+.sla-delay{font-size:9px;color:#888;font-weight:600;}
+.sla-arrow{font-size:10px;color:#CBD5E1;margin:0 2px;align-self:flex-start;margin-top:4px;}
+
+/* ── HOME PAGE ── */
+#page-home{display:block;min-height:100vh;background:var(--dy-bg);padding:0 0 40px;}
+#page-detail{display:none;}
+
+.home-header{background:#fff;border-bottom:1px solid var(--dy-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.home-brand{font-size:22px;font-weight:900;color:var(--dy-black);letter-spacing:-.02em;}
+.home-brand span{color:var(--dy-orange);}
+.home-subtitle{font-size:12px;color:var(--dy-gray);}
+
+.home-body{max-width:960px;margin:0 auto;padding:32px 24px;}
+.home-title{font-size:20px;font-weight:800;color:var(--dy-black);margin-bottom:6px;}
+.home-desc{font-size:13px;color:var(--dy-gray);margin-bottom:28px;}
+
+/* Back button */
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--dy-gray);background:#F9FAFB;border:1px solid var(--dy-border);border-radius:6px;padding:6px 12px;cursor:pointer;transition:background .15s;text-decoration:none;}
+.back-btn:hover{background:#F0F0F0;color:var(--dy-black);}
+
+/* Home phase blocks */
+.h-phase{margin-bottom:16px;border-radius:8px;overflow:hidden;border:1.5px solid;}
+.h-phase-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;}
+.h-phase-head .ph-left .ph-num{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.8;}
+.h-phase-head .ph-left .ph-name{font-size:13px;font-weight:700;margin-top:1px;}
+.h-phase-head .ph-timing{font-size:10.5px;opacity:.75;font-style:italic;}
+.h-emails{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px;background:#fff;}
+
+.h-email{border:1.5px solid;border-radius:7px;padding:10px 13px;cursor:pointer;transition:box-shadow .15s,transform .1s;flex:1;min-width:150px;max-width:220px;}
+.h-email:hover{box-shadow:0 4px 14px rgba(0,0,0,.1);transform:translateY(-1px);}
+.h-email .he-ref{font-size:13px;font-weight:800;margin-bottom:2px;}
+.h-email .he-timing{font-size:9.5px;font-weight:600;opacity:.6;margin-bottom:6px;}
+.h-email .he-obj{font-size:11.5px;color:#444;line-height:1.45;}
+.h-email .he-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;display:inline-block;margin-top:6px;}
+
+/* Colors per phase */
+.h-p1{border-color:#0EA5A0;} .h-p1 .he-ref{color:#0B8580;} .h-p1 .he-badge{background:#E6F7F7;color:#0B8580;}
+.h-p2{border-color:#F59E0B;} .h-p2 .he-ref{color:#B45309;} .h-p2 .he-badge{background:#FEF3C7;color:#B45309;}
+.h-p3{border-color:#EF4444;} .h-p3 .he-ref{color:#DC2626;} .h-p3 .he-badge{background:#FEE2E2;color:#DC2626;}
+.h-p3-legal{border-color:#7F1D1D !important;background:#FFF8F8;} .h-p3-legal .he-ref{color:#7F1D1D !important;} .h-p3-legal .he-badge{background:#FEE2E2 !important;color:#7F1D1D !important;}
+.h-p4{border-color:#10B981;} .h-p4 .he-ref{color:#059669;} .h-p4 .he-badge{background:#D1FAE5;color:#059669;}
+.h-p5{border-color:#8B5CF6;} .h-p5 .he-ref{color:#7C3AED;} .h-p5 .he-badge{background:#EDE9FE;color:#7C3AED;}
+.h-manual{border-style:dashed !important;}
+
+.h-connector{text-align:center;font-size:18px;color:#CBD5E1;margin:4px 0;line-height:1;}
+.h-split{display:flex;gap:10px;}
+.h-split .h-phase{flex:1;}
+
+/* Legend */
+.h-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+.h-leg{display:flex;align-items:center;gap:5px;font-size:11px;color:#555;}
+.h-leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div id="page-home">
+  <div class="home-header">
+    <div>
+      <div class="home-brand">DA<span>)</span>USE</div>
+      <div class="home-subtitle">Cycle de facturation & recouvrement partenaires</div>
+    </div>
+    <div style="font-size:11px;color:var(--dy-gray);">Cliquez sur un email pour voir son contenu →</div>
+  </div>
+
+  <div class="home-body">
+    <div class="home-title">Parcours email · Vue hôtel</div>
+    <div class="home-desc">Ordre chronologique — du premier envoi de facture à la mise en demeure. Cliquez sur un email pour ouvrir son contenu.</div>
+
+    <div class="h-legend">
+      <div class="h-leg"><div class="h-leg-dot" style="background:#0EA5A0;"></div>Phase 1 — Facturation</div>
+      <div class="h-leg"><div class="h-leg-dot" style="background:#F59E0B;"></div>Phase 2 — Relances</div>
+      <div class="h-leg"><div class="h-leg-dot" style="background:#EF4444;"></div>Phase 3 — Bad payer</div>
+      <div class="h-leg"><div class="h-leg-dot" style="background:#10B981;"></div>Phase 4 — Résolution</div>
+      <div class="h-leg"><div class="h-leg-dot" style="background:#8B5CF6;"></div>Phase 5 — Réactivation</div>
+      <div class="h-leg"><div class="h-leg-dot" style="border:1.5px dashed #999;background:transparent;"></div>Manuel</div>
+    </div>
+
+    <!-- PHASE 1 -->
+    <div class="h-phase" style="border-color:var(--p1);">
+      <div class="h-phase-head" style="background:var(--p1);color:#fff;">
+        <div class="ph-left"><div class="ph-num">Phase 1</div><div class="ph-name">Facturation & prévention</div></div>
+        <div class="ph-timing">Avant et à l'échéance · Compte actif</div>
+      </div>
+      <div class="h-emails">
+        <div class="h-email h-p1 h-manual" onclick="goTo('a1')">
+          <div class="he-ref">A1</div><div class="he-timing">Avant clôture mensuelle</div>
+          <div class="he-obj">Valider les réservations avant émission de la facture</div>
+          <div class="he-badge">Manuel · Action requise</div>
+        </div>
+        <div class="h-email h-p1" onclick="goTo('a2')">
+          <div class="he-ref">A2</div><div class="he-timing">J0 — Émission facture</div>
+          <div class="he-obj">Facture disponible — montant dû et date d'échéance</div>
+          <div class="he-badge">Auto · Informatif</div>
+        </div>
+        <div class="h-email h-p1" onclick="goTo('a11')">
+          <div class="he-ref">A11</div><div class="he-timing">J−7 avant échéance</div>
+          <div class="he-obj">Rappel proactif — éviter l'oubli avant retard</div>
+          <div class="he-badge">Auto · Préventif</div>
+        </div>
+        <div class="h-email h-p1" onclick="goTo('a12')">
+          <div class="he-ref">A12</div><div class="he-timing">J−3 avant prélèvement DD</div>
+          <div class="he-obj">Avertir du prélèvement automatique imminent</div>
+          <div class="he-badge">Auto · DD actif</div>
+        </div>
+        <div class="h-email h-p1" onclick="goTo('a4')">
+          <div class="he-ref">A4</div><div class="he-timing">Jour du rejet DD</div>
+          <div class="he-obj">Prélèvement échoué — demander règlement alternatif immédiat</div>
+          <div class="he-badge">Auto · Si rejet</div>
+        </div>
+        <div class="h-email h-p1 h-manual" onclick="goTo('a10')">
+          <div class="he-ref">A10</div><div class="he-timing">Mensuel / périodique</div>
+          <div class="he-obj">Récapitulatif Accor — synthèse de la période</div>
+          <div class="he-badge">Accor uniquement</div>
+        </div>
+        <div class="h-email h-p1" onclick="goTo('a5')">
+          <div class="he-ref">A5</div><div class="he-timing">À l'émission</div>
+          <div class="he-obj">Note de crédit — informer d'un remboursement ou ajustement</div>
+          <div class="he-badge">Auto · Si avoir</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="h-connector">↓ Facture non réglée à l'échéance</div>
+
+    <!-- PHASE 2 -->
+    <div class="h-phase" style="border-color:var(--p2);">
+      <div class="h-phase-head" style="background:var(--p2);color:#fff;">
+        <div class="ph-left"><div class="ph-num">Phase 2</div><div class="ph-name">Relances impayés</div></div>
+        <div class="ph-timing">J+1 → J+30 · Compte actif</div>
+      </div>
+      <div class="h-emails">
+        <div class="h-email h-p2 h-manual" onclick="goTo('a3p2')">
+          <div class="he-ref">A3</div><div class="he-timing">J+1 · Manuel</div>
+          <div class="he-obj">Premier contact humain — ouvrir le dialogue, comprendre la situation</div>
+          <div class="he-badge">Manuel · Cash Collection</div>
+        </div>
+        <div class="h-email h-p2" onclick="goTo('c1')">
+          <div class="he-ref">C1</div><div class="he-timing">J+1 · Relance 1/3</div>
+          <div class="he-obj">Rappel doux — facture en retard, règlement attendu</div>
+          <div class="he-badge">Auto · Amber</div>
+        </div>
+        <div class="h-email h-p2" onclick="goTo('c2')">
+          <div class="he-ref">C2</div><div class="he-timing">J+15 · Relance 2/3</div>
+          <div class="he-obj">Pression accrue — montant toujours impayé, ton plus ferme</div>
+          <div class="he-badge">Auto · Amber foncé</div>
+        </div>
+        <div class="h-email h-p2" onclick="goTo('c3')">
+          <div class="he-ref">C3</div><div class="he-timing">J+30 · Relance 3/3</div>
+          <div class="he-obj">Ultimatum — 48h pour répondre, mention explicite des risques</div>
+          <div class="he-badge">Auto · Urgent</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="h-connector">↓ Toujours aucun paiement à J+30</div>
+
+    <!-- PHASE 3 -->
+    <div class="h-phase" style="border-color:var(--p3);">
+      <div class="h-phase-head" style="background:var(--p3);color:#fff;">
+        <div class="ph-left"><div class="ph-num">Phase 3</div><div class="ph-name">Warning bad payer → Suspension → Mise en demeure</div></div>
+        <div class="ph-timing">J+35 → J+75 · Escalade critique</div>
+      </div>
+      <div class="h-emails">
+        <div class="h-email h-p3" onclick="goTo('a6')">
+          <div class="he-ref">A6</div><div class="he-timing">J+35</div>
+          <div class="he-obj">Situation critique — décompte complet + plan d'échelonnement proposé</div>
+          <div class="he-badge">Auto · ≥ 5 factures</div>
+        </div>
+        <div class="h-email h-p3" onclick="goTo('a9b')">
+          <div class="he-ref">A9B</div><div class="he-timing">J+52 · J−7 deadline</div>
+          <div class="he-obj">Compte à rebours — 7 jours restants, message court et direct</div>
+          <div class="he-badge">Auto · Urgence max</div>
+        </div>
+        <div class="h-email h-p3 h-manual" onclick="goTo('a7')">
+          <div class="he-ref">A7</div><div class="he-timing">J+60</div>
+          <div class="he-obj">Compte suspendu — conséquences, montant dû, procédure de réactivation</div>
+          <div class="he-badge">Manuel · Finance/AM</div>
+        </div>
+        <div class="h-email h-p3-legal h-manual" onclick="goTo('a16')">
+          <div class="he-ref">A16</div><div class="he-timing">J+75</div>
+          <div class="he-obj">Mise en demeure légale — 15 jours ou procédure judiciaire engagée</div>
+          <div class="he-badge">Manuel · Juridique requis</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin:4px 0;">
+      <div style="flex:1;text-align:center;font-size:12px;color:#10B981;font-weight:600;">↓ Paiement reçu (hors suspension)</div>
+      <div style="flex:1;text-align:center;font-size:12px;color:#8B5CF6;font-weight:600;">↓ Paiement reçu après suspension</div>
+    </div>
+
+    <!-- PHASE 4 + 5 -->
+    <div class="h-split">
+      <div class="h-phase" style="border-color:var(--p4);">
+        <div class="h-phase-head" style="background:var(--p4);color:#fff;">
+          <div class="ph-left"><div class="ph-num">Phase 4</div><div class="ph-name">Résolution</div></div>
+        </div>
+        <div class="h-emails">
+          <div class="h-email h-p4" style="max-width:100%;" onclick="goTo('d1')">
+            <div class="he-ref">D1</div><div class="he-timing">À réception du paiement</div>
+            <div class="he-obj">Confirmation de paiement — clôturer positivement, stopper les relances</div>
+            <div class="he-badge">Auto · NetSuite "paid"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="h-phase" style="border-color:var(--p5);">
+        <div class="h-phase-head" style="background:var(--p5);color:#fff;">
+          <div class="ph-left"><div class="ph-num">Phase 5</div><div class="ph-name">Réactivation</div></div>
+        </div>
+        <div class="h-emails">
+          <div class="h-email h-p5" onclick="goTo('a8')">
+            <div class="he-ref">A8</div><div class="he-timing">1re réactivation</div>
+            <div class="he-obj">Compte réactivé — reprendre la relation, prévenir activation DD au 2e incident</div>
+            <div class="he-badge">Auto · Post-suspension</div>
+          </div>
+          <div class="h-email h-p5" onclick="goTo('a15')">
+            <div class="he-ref">A15</div><div class="he-timing">2e réactivation</div>
+            <div class="he-obj">Compte réactivé + Direct Debit activé automatiquement — expliquer le fonctionnement</div>
+            <div class="he-badge">Auto · DD activé</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /page-home -->
+
+<div id="page-detail">
+<div style="background:#fff;border-bottom:1px solid var(--dy-border);padding:8px 20px;display:flex;align-items:center;gap:12px;"><span class="back-btn" onclick="goHome()">← Accueil</span><span style="font-size:12px;color:var(--dy-gray);" id="detail-label">Vue détaillée</span></div>
+
+<!-- ══ FRISE ══ -->
+<div id="frise">
+  <div class="frise-inner">
+
+    <div class="frise-phase" onclick="scrollTo('p1')">
+      <div class="fp-head" style="background:var(--p1);">
+        <div><div class="fp-num">PHASE 1</div><div class="fp-title">Facturation</div></div>
+      </div>
+      <div class="fp-emails">
+        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a1')">A1</span>
+        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a2')">A2</span>
+        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a11')">A11</span>
+        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a12')">A12</span>
+        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a10')">A10</span>
+        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a5')">A5</span>
+        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a4')">A4</span>
+      </div>
+    </div>
+
+    <div class="frise-phase" onclick="scrollTo('p2')">
+      <div class="fp-head" style="background:var(--p2);">
+        <div><div class="fp-num">PHASE 2</div><div class="fp-title">Relances impayés</div></div>
+      </div>
+      <div class="fp-emails">
+        <span class="fp-tag" style="background:var(--p2-light);color:var(--p2);" onclick="e('a3p2')">A3</span>
+        <span class="fp-tag" style="background:var(--p2-light);color:var(--p2);" onclick="e('c1')">C1</span>
+        <span class="fp-tag" style="background:var(--p2-light);color:var(--p2);" onclick="e('c2')">C2</span>
+        <span class="fp-tag" style="background:var(--p2-light);color:var(--p2);" onclick="e('c3')">C3</span>
+      </div>
+    </div>
+
+    <div class="frise-phase" onclick="scrollTo('p3')">
+      <div class="fp-head" style="background:var(--p3);">
+        <div><div class="fp-num">PHASE 3</div><div class="fp-title">Warning bad payers</div></div>
+      </div>
+      <div class="fp-emails">
+        <span class="fp-tag" style="background:var(--p3-light);color:var(--p3);" onclick="e('a6')">A6</span>
+        <span class="fp-tag" style="background:var(--p3-light);color:var(--p3);" onclick="e('a9b')">A9B</span>
+        <span class="fp-tag" style="background:var(--p3-light);color:var(--p3);" onclick="e('a7')">A7</span>
+        <span class="fp-tag" style="background:var(--p3-light);color:var(--p3);" onclick="e('a16')">A16</span>
+      </div>
+    </div>
+
+    <div class="frise-phase" onclick="scrollTo('p4')">
+      <div class="fp-head" style="background:var(--p4);">
+        <div><div class="fp-num">PHASE 4</div><div class="fp-title">Résolution</div></div>
+      </div>
+      <div class="fp-emails">
+        <span class="fp-tag" style="background:var(--p4-light);color:var(--p4);" onclick="e('d1')">D1</span>
+      </div>
+    </div>
+
+    <div class="frise-phase" onclick="scrollTo('p5')">
+      <div class="fp-head" style="background:var(--p5);">
+        <div><div class="fp-num">PHASE 5</div><div class="fp-title">Réactivation</div></div>
+      </div>
+      <div class="fp-emails">
+        <span class="fp-tag" style="background:var(--p5-light);color:var(--p5);" onclick="e('a8')">A8</span>
+        <span class="fp-tag" style="background:var(--p5-light);color:var(--p5);" onclick="e('a15')">A15</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- ══ SIDEBAR ══ -->
+<aside>
+  <div class="sb-section">Phase 1 — Facturation</div>
+  <a class="sb-item" href="#a1"><span class="sb-dot" style="background:var(--p1)"></span>A1 — Validation no-shows<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">EN</span></a>
+  <a class="sb-item" href="#a2"><span class="sb-dot" style="background:var(--p1)"></span>A2 — Facture émise (FR+EN)<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">FR</span></a>
+  <a class="sb-item" href="#a11"><span class="sb-dot" style="background:var(--p1)"></span>A11 — Rappel échéance J-7<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">NEW</span></a>
+  <a class="sb-item" href="#a12"><span class="sb-dot" style="background:var(--p1)"></span>A12 — Direct Debit<span class="sb-ref" style="background:#FEE2E2;color:#991B1B">BUG</span></a>
+  <a class="sb-item" href="#a10"><span class="sb-dot" style="background:var(--p1)"></span>A10 — Récap Accor<span class="sb-ref" style="background:#EDE9FE;color:#5B21B6">NEW</span></a>
+  <a class="sb-item" href="#a5"><span class="sb-dot" style="background:var(--p1)"></span>A5 — Note de crédit</a>
+  <a class="sb-item" href="#a4"><span class="sb-dot" style="background:var(--p1)"></span>A4 — Échec prélèvement</a>
+
+  <div class="sb-section">Phase 2 — Relances</div>
+  <a class="sb-item" href="#a3p2"><span class="sb-dot" style="background:var(--p2)"></span>A3 — Relance manuelle</a>
+  <a class="sb-item" href="#c1"><span class="sb-dot" style="background:var(--p2)"></span>C1 — Relance auto J+1</a>
+  <a class="sb-item" href="#c2"><span class="sb-dot" style="background:var(--p2)"></span>C2 — Relance auto J+15</a>
+  <a class="sb-item" href="#c3"><span class="sb-dot" style="background:var(--p2)"></span>C3 — Relance auto J+30</a>
+
+  <div class="sb-section">Phase 3 — Warning</div>
+  <a class="sb-item" href="#a6"><span class="sb-dot" style="background:var(--p3)"></span>A6 — Warning bad payer</a>
+  <a class="sb-item" href="#a6en"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A6 EN</a>
+  <a class="sb-item" href="#a9b"><span class="sb-dot" style="background:var(--p3)"></span>A9B — J-7 avant suspension</a>
+  <a class="sb-item" href="#a9ben"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A9B EN</a>
+  <a class="sb-item" href="#a7"><span class="sb-dot" style="background:var(--p3)"></span>A7 — Désactivation</a>
+  <a class="sb-item" href="#a7en"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A7 EN</a>
+  <a class="sb-item" href="#a16"><span class="sb-dot" style="background:var(--p3)"></span>A16 — Mise en demeure</a>
+  <a class="sb-item" href="#a16en"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A16 EN</a>
+
+  <div class="sb-section">Phase 4 & 5</div>
+  <a class="sb-item" href="#d1"><span class="sb-dot" style="background:var(--p4)"></span>D1 — Paiement reçu</a>
+  <a class="sb-item" href="#d1en"><span class="sb-dot" style="background:var(--p4);opacity:.5"></span>D1 EN</a>
+  <a class="sb-item" href="#a8"><span class="sb-dot" style="background:var(--p4)"></span>A8 — Réactivation</a>
+  <a class="sb-item" href="#a8en"><span class="sb-dot" style="background:var(--p4);opacity:.5"></span>A8 EN</a>
+  <a class="sb-item" href="#a15"><span class="sb-dot" style="background:var(--p4)"></span>A15 — Réactivation + DD auto</a>
+  <a class="sb-item" href="#a15en"><span class="sb-dot" style="background:var(--p4);opacity:.5"></span>A15 EN</a>
+
+  <div style="flex:1;"></div>
+  <div style="padding:14px;font-size:10px;color:rgba(255,255,255,.2);border-top:1px solid rgba(255,255,255,.07);line-height:1.7;">
+    15 templates · Juin 2026<br>
+    <span style="color:rgba(255,255,255,.35);">Variables en <span style="background:#FEF3C7;color:#92400E;padding:0 4px;border-radius:3px;">jaune</span></span>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main>
+
+<!-- ═══════════════════════ PHASE 1 ═══════════════════════ -->
+<div class="phase-block" id="p1">
+  <div class="phase-header" style="background:var(--p1-light);border-color:var(--p1);">
+    <div>
+      <h2 style="color:var(--p1);">Phase 1 — Facturation</h2>
+      <p style="color:var(--p1);">Déclencheur : réservation du client · Statut partenaire : <strong>STATUS_ACTIVE</strong></p>
+    </div>
+    <span class="phase-count" style="background:var(--p1);color:#fff;">7 emails</span>
+  </div>
+
+  <!-- A1 -->
+  <div class="email-card" id="a1">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p1-color">A1</div></div>
+      <div class="card-info">
+        <div class="card-title">Validation réservations & déclaration no-shows <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Envoyé le 1er du mois. Le partenaire valide la liste des réservations facturables et déclare ses no-shows avant la date limite. C'est le point de départ du cycle de facturation.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : Cron 1er du mois</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          <span class="pill pill-refonte">Priorité : Traduction FR requise</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p1);">
+          <div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">[Action required before <var>{{deadline_date}}</var>] Validate your bookings for <var>{{month}}</var> — <var>{{hotel_name}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">The list of your bookings for <var>{{month}}</var> is now available in the <strong>Invoiceable Booking</strong> section of your portal.</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Review my bookings</span></div>
+          <div class="e-p">Please check the booking list and make sure it is accurate. Declare any no-shows before the deadline below.</div>
+          <div class="e-box warn">
+            <div class="e-row"><span class="e-lbl">No-show declaration deadline</span><span class="e-val" style="color:#F59E0B;font-size:14px;"><var>{{deadline_date}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Invoice generation date</span><span class="e-val"><var>{{invoice_date}}</var></span></div>
+          </div>
+          <div class="e-box info">
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:14px;flex-shrink:0;">ℹ️</span><div style="font-size:12.5px;color:#1E40AF;line-height:1.55;">After <var>{{deadline_date}}</var>, all bookings are considered confirmed and the commission is due. <strong>No changes can be made after this date.</strong></div></div>
+          </div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your booking validation, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">Version française (FR)</div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">[Action requise avant le <var>{{date_limite}}</var>] Validez vos réservations pour <var>{{mois}}</var> — <var>{{nom_hotel}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">La liste de vos réservations pour <var>{{mois}}</var> est désormais disponible dans la section <strong>Réservations facturables</strong> de votre portail.</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Consulter mes réservations</span></div>
+          <div class="e-p">Vérifiez la liste des réservations et assurez-vous qu'elle est exacte. Déclarez vos no-shows avant la date limite ci-dessous.</div>
+          <div class="e-box warn">
+            <div class="e-row"><span class="e-lbl">Date limite de déclaration no-show</span><span class="e-val" style="color:#F59E0B;font-size:14px;"><var>{{date_limite}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Date de génération de la facture</span><span class="e-val"><var>{{date_facture}}</var></span></div>
+          </div>
+          <div class="e-box info">
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:14px;flex-shrink:0;">ℹ️</span><div style="font-size:12.5px;color:#1E40AF;line-height:1.55;">Après le <var>{{date_limite}}</var>, toutes les réservations sont considérées comme confirmées et la commission est due. <strong>Aucune modification ne sera possible après cette date.</strong></div></div>
+          </div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à la validation de vos réservations, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{hotel_name}}</var><var>{{month}}</var><var>{{deadline_date}}</var><var>{{invoice_date}}</var><var>{{nom_hotel}}</var><var>{{mois}}</var><var>{{date_limite}}</var><var>{{date_facture}}</var></div>
+  </div>
+
+  <!-- A2 — Facture émise (FR + EN) -->
+  <div class="email-card" id="a2">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p1-color">A2</div></div>
+      <div class="card-info">
+        <div class="card-title">Facture émise — Justificatif TVA <span class="lang-badge lang-fr">FR</span> <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Envoyé le 6 du mois lors de l'émission de la facture dans NetSuite. Version française pour les partenaires France. Deux versions : FR pour les partenaires France, EN pour les partenaires internationaux.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : facture créée dans NetSuite</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          <span class="pill pill-refonte">Refonte — montant + n° facture ajoutés</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p1);">
+          <div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">Votre facture Dayuse de <var>{{periode}}</var> est disponible — <var>{{nom_hotel}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Veuillez trouver ci-joint votre justificatif de TVA pour la période <var>{{periode}}</var>. Merci de procéder au règlement avant la date d'échéance indiquée ci-dessous.</div>
+          <div class="e-box neutral">
+            <div class="e-row"><span class="e-lbl">Numéro de facture</span><span class="e-val"><var>{{num_facture}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Période</span><span class="e-val"><var>{{periode}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Montant dû</span><span class="e-val"><var>{{montant_du}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Date d'échéance</span><span class="e-val"><var>{{date_echeance}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Payer ma facture</span></div>
+          <div class="e-hr"></div>
+          <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Options de paiement</div>
+          <div class="e-payment-opt"><div class="e-opt-icon">💳</div><div><div class="e-opt-title">Par carte bancaire</div><div class="e-opt-desc">Connectez-vous à votre portail · Section "Invoices" · Sélectionnez la facture · Cliquez sur "Pay"</div></div></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">🏦</div><div><div class="e-opt-title">Par virement bancaire</div><div class="e-opt-desc">Notre RIB est disponible en pièce jointe. Merci d'indiquer impérativement le numéro <var>{{num_facture}}</var> en référence du virement.</div></div></div>
+          <div class="e-box info" style="margin-top:16px;"><div class="e-row" style="border-bottom:none;padding-bottom:0;"><span style="font-size:12px;color:#1E40AF;">ℹ️ &nbsp;Passé la date d'échéance, des intérêts de retard et frais de recouvrement peuvent s'appliquer — voir détails sur votre facture.</span></div></div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à cette facture, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+    
+    <div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">Version anglaise (EN — international)</div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">Your Dayuse invoice for <var>{{period}}</var> — <var>{{hotel_name}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">Kindly proceed to the payment of the attached invoice for the period <var>{{period}}</var>.</div>
+          <div class="e-box neutral">
+            <div class="e-row"><span class="e-lbl">Dayuse Invoice number</span><span class="e-val"><var>{{invoice_number}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Amount</span><span class="e-val"><var>{{amount}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Due date</span><span class="e-val"><var>{{due_date}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Pay my invoice</span></div>
+          <div class="e-hr"></div>
+          <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Payment options</div>
+          <div class="e-payment-opt"><div class="e-opt-icon">💳</div><div><div class="e-opt-title">By credit card</div><div class="e-opt-desc">Log in to your portal · "Invoices" section · Select the invoice · Click "Pay"</div></div></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">🏦</div><div><div class="e-opt-title">By bank transfer</div><div class="e-opt-desc">Our bank details are attached. Please indicate invoice number <var>{{invoice_number}}</var> as the payment reference.</div></div></div>
+          <div class="e-box info" style="margin-top:16px;"><div class="e-row" style="border-bottom:none;padding-bottom:0;"><span style="font-size:12px;color:#1E40AF;">ℹ️ &nbsp;After the due date, late penalty and interest fees may apply — details on your invoice.</span></div></div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding this invoice, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{periode}}</var><var>{{num_facture}}</var><var>{{montant_du}}</var><var>{{date_echeance}}</var></div>
+  </div>
+
+
+  <!-- A11 — Rappel échéance J-7 -->
+  <div class="email-card" id="a11">
+    <div class="card-head">
+      <div class="card-ref-wrap"><div class="card-ref p1-color" style="position:relative;">A11<span class="new-ribbon">NEW</span></div></div>
+      <div>
+        <div class="card-title">Rappel d'échéance facture — J-7 <span class="lang-badge lang-fr">FR</span> <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-meta">
+          <span class="pill pill-auto">Automatique</span>
+          <span class="pill">J-7 avant échéance</span>
+          <span class="pill">NetSuite</span>
+        </div>
+        <div class="card-desc">Rappel cordial envoyé 7 jours avant la date d'échéance de la facture. Objectif : inciter au paiement anticipé, informer du mode de règlement et proposer l'activation du Direct Debit avant que la facture ne soit impayée.</div>
+      </div>
+    </div>
+
+    <!-- FR version -->
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">Rappel — Votre facture <var>{{num_facture}}</var> arrive à échéance le <var>{{date_echeance}}</var> — <var>{{nom_hotel}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#F5A623);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Nous vous rappelons que la facture ci-dessous arrive à échéance dans <strong>7 jours</strong>. Pour éviter toute relance, nous vous invitons à procéder au règlement avant la date indiquée.</div>
+          <div class="e-box" style="background:var(--p2-light);border-color:var(--p2);">
+            <div class="e-row"><span class="e-lbl">Numéro de facture</span><span class="e-val"><var>{{num_facture}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Montant TTC</span><span class="e-val" style="font-weight:700;color:var(--p2);"><var>{{montant_ttc}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Date d'échéance</span><span class="e-val" style="font-weight:600;"><var>{{date_echeance}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Période facturée</span><span class="e-val"><var>{{periode}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Régler ma facture</span></div>
+          <div class="e-hr"></div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimisez vos paiements</div>
+          <div class="e-payment-opt"><div class="e-opt-icon">🔄</div><div><div class="e-opt-title">Activez le Direct Debit</div><div class="e-opt-desc">Activez le prélèvement automatique et ne manquez plus jamais une échéance. Vos factures Dayuse sont réglées automatiquement, sans démarche de votre part.<br><br>Notre RIB est disponible en pièce jointe. Merci d'indiquer impérativement le numéro de facture en référence du virement.</div></div></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">📎</div><div><div class="e-opt-title">Justificatif TVA</div><div class="e-opt-desc">Le certificat de TVA Dayuse est joint à cet email pour vos besoins comptables.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à cette facture, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+
+    <!-- EN version -->
+    <div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">English version (EN — international)</div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val">Reminder — Invoice <var>{{invoice_number}}</var> is due on <var>{{due_date}}</var> — <var>{{hotel_name}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,var(--p1),#14B8A6);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">This is a friendly reminder that the following invoice is due in <strong>7 days</strong>. To avoid any payment reminders, please arrange settlement before the due date.</div>
+          <div class="e-box" style="background:var(--p2-light);border-color:var(--p2);">
+            <div class="e-row"><span class="e-lbl">Invoice number</span><span class="e-val"><var>{{invoice_number}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Total amount</span><span class="e-val" style="font-weight:700;color:var(--p2);"><var>{{amount_incl_tax}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Due date</span><span class="e-val" style="font-weight:600;"><var>{{due_date}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Billing period</span><span class="e-val"><var>{{billing_period}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Pay my invoice</span></div>
+          <div class="e-hr"></div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimize your payments</div>
+          <div class="e-payment-opt"><div class="e-opt-icon">🔄</div><div><div class="e-opt-title">Activate Direct Debit</div><div class="e-opt-desc">Activate automatic payments and never miss a due date. Your Dayuse invoices are settled automatically at each billing cycle, with no action required on your part.<br><br>Our bank details are attached to this email. Please include the invoice number as your payment reference.</div></div></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">📎</div><div><div class="e-opt-title">VAT certificate</div><div class="e-opt-desc">The Dayuse VAT certificate is attached to this email for your accounting records.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding this invoice, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    </div>
+
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{num_facture}}</var><var>{{montant_ttc}}</var><var>{{date_echeance}}</var><var>{{periode}}</var><var>{{hotel_name}}</var><var>{{invoice_number}}</var><var>{{amount_incl_tax}}</var><var>{{due_date}}</var><var>{{billing_period}}</var></div>
+  </div>
+
+  <!-- A12 — Direct Debit -->
+  <div class="email-card" id="a12">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p1-color">A12</div></div>
+      <div class="card-info">
+        <div class="card-title">Notification prélèvement Direct Debit <span class="lang-badge lang-fr">FR</span></div>
+        <div class="card-desc">Envoyé aux partenaires en mandat de prélèvement automatique. Confirme la date et le montant du prélèvement à venir. Bug corrigé dans cette version.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : prélèvement programmé (mandat DD actif)</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          
+        </div>
+        <div class="urgency-row" style="color:var(--p1);">
+          <div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">Prélèvement Dayuse prévu le <var>{{date_prelevement}}</var> — <var>{{montant}}</var> — <var>{{nom_hotel}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Veuillez trouver ci-joint la facture suivante, qui fera l'objet d'un prélèvement automatique sur votre compte.</div>
+          <div class="e-box neutral">
+            <div class="e-row"><span class="e-lbl">Numéro de facture</span><span class="e-val"><var>{{num_facture}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Date d'échéance</span><span class="e-val"><var>{{date_echeance}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Montant</span><span class="e-val"><var>{{montant}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Date de prélèvement prévue</span><span class="e-val" style="color:#0EA5A0;font-weight:700;"><var>{{date_prelevement}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Consulter ma facture</span></div>
+          <div class="e-p" style="font-size:13px;color:#555;">Aucune action n'est requise de votre part. Assurez-vous simplement que votre compte dispose des fonds suffisants à la date de prélèvement.</div>
+          <div class="e-p" style="font-size:13px;color:#555;">Pour consulter ou télécharger vos factures, connectez-vous à votre portail partenaire.</div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à ce prélèvement automatique, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">English version (EN — international)</div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val">Upcoming Dayuse Direct Debit on <var>{{debit_date}}</var> — <var>{{amount}}</var> — <var>{{hotel_name}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">Please find attached the following invoice, which will be collected by Direct Debit from your account.</div>
+          <div class="e-box neutral">
+            <div class="e-row"><span class="e-lbl">Invoice number</span><span class="e-val"><var>{{invoice_number}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Due date</span><span class="e-val"><var>{{due_date}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Amount</span><span class="e-val"><var>{{amount}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Direct Debit date</span><span class="e-val" style="color:#0EA5A0;font-weight:700;"><var>{{debit_date}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">View my invoice</span></div>
+          <div class="e-p" style="font-size:13px;color:#555;">No action is required on your part. Please ensure that your account has sufficient funds on the debit date.</div>
+          <div class="e-p" style="font-size:13px;color:#555;">To view or download your invoices, log in to your partner portal.</div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding this Direct Debit, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{num_facture}}</var><var>{{montant}}</var><var>{{date_echeance}}</var><var>{{date_prelevement}}</var></div>
+  </div>
+
+  <!-- A10 — Récap Accor -->
+  <div class="email-card" id="a10">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p1-color" style="position:relative;">A10<span class="new-ribbon">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Récapitulatif bi-mensuel Accor <span class="lang-badge lang-fr">FR</span><span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Envoyé deux fois par mois aux partenaires du groupe Accor. Synthèse des réservations et commissions dues sur la période. Template créé — n'existait pas dans le zip fourni.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : Cron bi-mensuel · filtre segment = Accor</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          <span class="pill pill-new">Contenu créé</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p1);">
+          <div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">Récapitulatif Dayuse · Accor · Période du <var>{{date_debut}}</var> au <var>{{date_fin}}</var> — <var>{{nom_hotel}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Veuillez trouver ci-dessous le récapitulatif des réservations Dayuse facturables pour la période du <var>{{date_debut}}</var> au <var>{{date_fin}}</var>.</div>
+          <div class="e-box neutral">
+            <div class="e-row"><span class="e-lbl">Établissement</span><span class="e-val"><var>{{nom_hotel}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Groupe</span><span class="e-val">Accor — <var>{{code_accor}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Période</span><span class="e-val"><var>{{date_debut}}</var> → <var>{{date_fin}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Nombre de réservations</span><span class="e-val"><var>{{nb_reservations}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Commission due</span><span class="e-val"><var>{{montant_commission}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Justificatif TVA</span><span class="e-val" style="color:#10B981;">✓ Joint à cet email</span></div>
+          </div>
+          <div class="e-p" style="font-size:13px;color:#555;"><strong style="color:#111;">Pièces jointes</strong><br>Justificatif de TVA Dayuse · Récapitulatif des réservations (période <var>{{date_debut}}</var> → <var>{{date_fin}}</var>)</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Payer mes factures</span><span class="e-btn ghost">Consulter le détail</span></div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à ce récapitulatif ou à la facturation de votre établissement, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+<div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">English version (EN — international)</div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val">Dayuse Accor Summary · Period <var>{{start_date}}</var> to <var>{{end_date}}</var> — <var>{{hotel_name}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">Please find below the summary of your Dayuse invoiceable bookings for the period <var>{{start_date}}</var> to <var>{{end_date}}</var>.</div>
+          <div class="e-box neutral">
+            <div class="e-row"><span class="e-lbl">Property</span><span class="e-val"><var>{{hotel_name}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Group</span><span class="e-val">Accor — <var>{{accor_code}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Period</span><span class="e-val"><var>{{start_date}}</var> → <var>{{end_date}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Number of bookings</span><span class="e-val"><var>{{nb_bookings}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Commission due</span><span class="e-val"><var>{{commission_amount}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">VAT certificate</span><span class="e-val" style="color:#10B981;">✓ Attached to this email</span></div>
+          </div>
+          <div class="e-p" style="font-size:13px;color:#555;"><strong style="color:#111;">Attachments</strong><br>Dayuse VAT certificate · Booking summary (<var>{{start_date}}</var> → <var>{{end_date}}</var>)</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Pay my invoices</span><span class="e-btn ghost">View details</span></div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding this summary or your property billing, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{code_accor}}</var><var>{{date_debut}}</var><var>{{date_fin}}</var><var>{{nb_reservations}}</var><var>{{montant_commission}}</var></div>
+  </div>
+
+  <!-- A5 — Note de crédit -->
+  <div class="email-card" id="a5">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p1-color">A5</div></div>
+      <div class="card-info">
+        <div class="card-title">Note de crédit / Avoir émis <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Envoyé lors de l'émission d'un avoir. Informe le partenaire du crédit appliqué et du solde restant. Ton trop froid dans la version actuelle — refonte recommandée.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : avoir créé dans NetSuite</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          <span class="pill pill-refonte">CTA ajouté · Ton amélioré</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p1);">
+          <div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">Credit note issued — <var>{{amount}}</var> credited to your account — <var>{{hotel_name}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#10B981,#34D399);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">A credit note has been issued on your account. Please find the details below and the document attached to this email.</div>
+          <div class="e-box success">
+            <div class="e-row"><span class="e-lbl">Document reference</span><span class="e-val"><var>{{document_ref}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Date</span><span class="e-val"><var>{{date}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Credit amount</span><span class="e-val green"><var>{{amount}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Your remaining open balance</span><span class="e-val"><var>{{open_balance}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">View my updated balance</span></div>
+          <div class="e-p" style="font-size:13px;color:#555;">This credit will be automatically deducted from your next invoice. For more information, please log on to your Dayuse Online Portal.</div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding this credit note, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+<div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">Version française (FR)</div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">Avoir émis — <var>{{montant}}</var> crédité sur votre compte — <var>{{nom_hotel}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#10B981,#34D399);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Un avoir a été émis sur votre compte. Veuillez trouver ci-dessous les détails et le document en pièce jointe.</div>
+          <div class="e-box success">
+            <div class="e-row"><span class="e-lbl">Référence du document</span><span class="e-val"><var>{{ref_document}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Date</span><span class="e-val"><var>{{date}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Montant du crédit</span><span class="e-val green"><var>{{montant}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Solde restant à régler</span><span class="e-val"><var>{{solde_ouvert}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Consulter mon solde</span></div>
+          <div class="e-p" style="font-size:13px;color:#555;">Ce crédit sera automatiquement déduit de votre prochaine facture. Pour plus d'informations, connectez-vous à votre portail partenaire Dayuse.</div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à cet avoir, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{hotel_name}}</var><var>{{document_ref}}</var><var>{{date}}</var><var>{{amount}}</var><var>{{open_balance}}</var><var>{{nom_hotel}}</var><var>{{ref_document}}</var><var>{{montant}}</var><var>{{solde_ouvert}}</var></div>
+  </div>
+
+  <!-- A4 — Échec prélèvement -->
+  <div class="email-card" id="a4">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p1-color">A4</div></div>
+      <div class="card-info">
+        <div class="card-title">Échec de prélèvement <span class="lang-badge lang-fr">FR</span></div>
+        <div class="card-desc">Déclenché sur rejet technique du prélèvement automatique. Action requise du partenaire pour mettre à jour ses coordonnées bancaires. La menace de désactivation a été déplacée au 2e échec.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : webhook rejet prélèvement</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          <span class="pill pill-refonte">Menace désactivation déplacée au 2e échec</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p2);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">Action requise — Échec de prélèvement sur votre compte <var>{{nom_hotel}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#EF8C38);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Nous avons rencontré un problème technique avec votre mandat de prélèvement automatique. Le prélèvement ci-dessous n'a pas pu être effectué.</div>
+          <div class="e-box warn">
+            <div class="e-row"><span class="e-lbl">Numéro de facture</span><span class="e-val"><var>{{num_facture}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Montant du prélèvement rejeté</span><span class="e-val" style="color:#F59E0B;"><var>{{montant}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Motif</span><span class="e-val">Prélèvement rejeté</span></div>
+          </div>
+          <div class="e-p">Nous vous invitons à mettre à jour vos coordonnées bancaires depuis votre portail partenaire afin de régulariser cette situation.</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Mettre à jour mes coordonnées bancaires</span></div>
+          <div class="e-box danger" style="margin-top:14px;"><div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:14px;flex-shrink:0;">⚠️</span><div style="font-size:12.5px;color:#991B1B;line-height:1.55;">En cas de <strong>nouvel échec</strong> de prélèvement, votre compte pourra être temporairement suspendu. Contactez-nous dès maintenant par retour d'email si vous souhaitez mettre à jour votre mandat.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à votre mandat de prélèvement, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+<div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">English version (EN — international)</div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val">Action required — Direct Debit failed on your account — <var>{{hotel_name}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#EF8C38);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">We encountered a technical issue with your Direct Debit mandate. The following payment could not be collected.</div>
+          <div class="e-box warn">
+            <div class="e-row"><span class="e-lbl">Invoice number</span><span class="e-val"><var>{{invoice_number}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Failed debit amount</span><span class="e-val" style="color:#F59E0B;"><var>{{amount}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Reason</span><span class="e-val">Direct Debit rejected</span></div>
+          </div>
+          <div class="e-p">Please update your bank details from your partner portal to resolve this situation.</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Update my bank details</span></div>
+          <div class="e-box danger" style="margin-top:14px;"><div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:14px;flex-shrink:0;">⚠️</span><div style="font-size:12.5px;color:#991B1B;line-height:1.55;">If a <strong>second Direct Debit failure</strong> occurs, your account may be temporarily suspended. Please contact us by return email if you wish to update your mandate.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your Direct Debit mandate, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{num_facture}}</var><var>{{montant}}</var></div>
+  </div>
+
+</div><!-- /phase 1 -->
+
+
+<!-- ═══════════════════════ PHASE 2 ═══════════════════════ -->
+<div class="phase-block" id="p2">
+  <div class="phase-header" style="background:var(--p2-light);border-color:var(--p2);">
+    <div>
+      <h2 style="color:#92400E;">Phase 2 — Relances impayés</h2>
+      <p style="color:#92400E;">Escalade progressive · Statut partenaire : <strong>STATUS_ACTIVE</strong> · Ton différencié à chaque étape</p>
+    </div>
+    <span class="phase-count" style="background:var(--p2);color:#fff;">4 emails</span>
+    <div class="sla-band"><div class="sla-node"><span class="sla-tag" style="background:#FFFBEB;color:#D97706;">A3</span><span class="sla-delay">Manuel</span></div><span class="sla-arrow">→</span><div class="sla-node"><span class="sla-tag" style="background:#FFFBEB;color:#D97706;">C1</span><span class="sla-delay">J+1</span></div><span class="sla-arrow">→</span><div class="sla-node"><span class="sla-tag" style="background:#FFFBEB;color:#D97706;">C2</span><span class="sla-delay">J+15</span></div><span class="sla-arrow">→</span><div class="sla-node"><span class="sla-tag" style="background:#FFFBEB;color:#D97706;">C3</span><span class="sla-delay">J+30</span></div></div>
+  </div>
+
+  <!-- A3 P2 — Relance manuelle -->
+  <div class="email-card" id="a3p2">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p2-color">A3</div></div>
+      <div class="card-info">
+        <div class="card-title">Relance manuelle — Disclaimer <span class="lang-badge lang-en">EN</span> <span class="lang-badge lang-fr">FR</span></div>
+        <div class="card-desc">Déclenchée manuellement par l'équipe Cash Collection. Email non-automatisé, signé par un agent nommé. C'est le seul email vraiment "humain" du cycle.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : manuel (Cash Collection)</span>
+          <span class="pill pill-manual">Validation humaine obligatoire</span>
+          <span class="pill pill-refonte">CTA + nom hôtel ajoutés</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p2);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val"><var>{{hotel_name}}</var> — Outstanding invoice(s) : <var>{{amount}}</var> — Please review</span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#F5A623);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">We would like to inform you that your account presents <strong><var>{{nb_invoices}}</var> unpaid invoice(s)</strong> for a total amount of <strong><var>{{amount}}</var></strong>.</div>
+          <div class="e-box info">
+            <div class="e-row"><span class="e-lbl">Outstanding amount</span><span class="e-val"><var>{{amount}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Number of invoices</span><span class="e-val"><var>{{nb_invoices}}</var></span></div>
+          </div>
+          <div class="e-p">We kindly ask you to settle this amount as soon as possible. Please find attached a copy of your account statement and the outstanding invoice(s).</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Settle my invoices</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
+            <span style="font-size:15px;flex-shrink:0;">🔄</span>
+            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Avoid future reminders — set up <strong style="color:#111;">Direct Debit</strong> for automatic payment at every due date.</span>
+            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Set up</span>
+          </div>
+          <div class="e-hr"></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Payment already made?</div><div class="e-opt-desc">Send us your proof of payment (invoice reference + transfer date) by return email — we will update your account immediately.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your outstanding invoices, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Collections Team</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">Version française (FR)</div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val"><var>{{nom_hotel}}</var> — Facture(s) en attente de règlement : <var>{{montant}}</var> — À votre attention</span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#F5A623);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Nous vous informons que votre compte présente <strong><var>{{nb_factures}}</var> facture(s) impayée(s)</strong> pour un montant total de <strong><var>{{montant}}</var></strong>.</div>
+          <div class="e-box info">
+            <div class="e-row"><span class="e-lbl">Montant en attente</span><span class="e-val"><var>{{montant}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Nombre de factures</span><span class="e-val"><var>{{nb_factures}}</var></span></div>
+          </div>
+          <div class="e-p">Nous vous remercions de régulariser cette situation dans les meilleurs délais. Vous trouverez en pièce jointe votre relevé de compte et les factures concernées.</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Régler mes factures</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
+            <span style="font-size:15px;flex-shrink:0;">🔄</span>
+            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Évitez les prochaines relances — activez le <strong style="color:#111;">Direct Debit</strong> pour un règlement automatique à chaque échéance.</span>
+            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Activer</span>
+          </div>
+          <div class="e-hr"></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez-nous votre preuve de paiement (référence facture + date de virement) par retour d'email — nous mettrons à jour votre compte immédiatement.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à vos factures en attente, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe recouvrement Dayuse</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{hotel_name}}</var><var>{{amount}}</var><var>{{nb_invoices}}</var><var>{{nom_hotel}}</var><var>{{montant}}</var><var>{{nb_factures}}</var></div>
+  </div>
+
+  <!-- C1 — Relance auto J+1 -->
+  <div class="email-card" id="c1">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p2-color">C1</div></div>
+      <div class="card-info">
+        <div class="card-title">Relance automatique 1 — Rappel (J+1) <span class="lang-badge lang-fr">FR</span> <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Premier rappel automatique le lendemain de l'échéance dépassée. Ton neutre, porte de sortie offerte, pas de mention de pénalités.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : J+1, statut unpaid</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          <span class="pill pill-refonte">CTA bouton · Nom hôtel · Template différencié</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p2);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val"><var>{{nom_hotel}}</var> — Rappel · Facture(s) en attente : <var>{{montant_du}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#F5A623);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#D97706;margin-bottom:12px;">Relance <strong style="font-size:12px;">1</strong> / 3</div>
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Sauf erreur de notre part, nous n'avons pas encore reçu le règlement de <var>{{nb_factures}}</var> facture(s) pour un montant total de <strong><var>{{montant_du}}</var></strong>, dont l'échéance est désormais dépassée.</div>
+          <div class="e-box info">
+            <div class="e-row"><span class="e-lbl">Montant en attente</span><span class="e-val"><var>{{montant_du}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Nombre de factures</span><span class="e-val"><var>{{nb_factures}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Échéance dépassée depuis</span><span class="e-val"><var>{{date_echeance}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Régler mes factures</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
+            <span style="font-size:15px;flex-shrink:0;">🔄</span>
+            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Évitez les prochaines relances — activez le <strong style="color:#111;">Direct Debit</strong> pour un règlement automatique à chaque échéance.</span>
+            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Activer</span>
+          </div>
+          <div class="e-hr"></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez-nous votre preuve de paiement (référence facture + date de virement) par retour d'email — nous mettrons à jour votre compte immédiatement.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à votre situation, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe recouvrement Dayuse</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">English version (EN — international)</div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val"><var>{{hotel_name}}</var> — Reminder · Outstanding invoice(s) : <var>{{amount_due}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#F5A623);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#D97706;margin-bottom:12px;">Reminder <strong style="font-size:12px;">1</strong> / 3</div>
+          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">Unless this has already been settled, we have not yet received payment for <var>{{nb_invoices}}</var> invoice(s) totalling <strong><var>{{amount_due}}</var></strong>, which is now past due.</div>
+          <div class="e-box info">
+            <div class="e-row"><span class="e-lbl">Outstanding amount</span><span class="e-val"><var>{{amount_due}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Number of invoices</span><span class="e-val"><var>{{nb_invoices}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Overdue since</span><span class="e-val"><var>{{due_date}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Settle my invoices</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
+            <span style="font-size:15px;flex-shrink:0;">🔄</span>
+            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Avoid future reminders — set up <strong style="color:#111;">Direct Debit</strong> for automatic payment at every due date.</span>
+            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Set up</span>
+          </div>
+          <div class="e-hr"></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Payment already made?</div><div class="e-opt-desc">Send us your proof of payment (invoice reference + transfer date) by return email — we will update your account immediately.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your outstanding invoices, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Collections Team</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    </div>
+    <div style="margin:10px 0 0;border:1.5px dashed #F59E0B;border-radius:6px;overflow:hidden;"><div style="background:#FEF3C7;padding:6px 12px;font-size:10px;font-weight:700;color:#D97706;text-transform:uppercase;letter-spacing:.06em;">🗓 Variante fin d'année — nov / déc — remplacer ou ajouter avant signature</div><div style="padding:10px 12px;background:#FFFBEB;"><div style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:4px;">FR</div><div style="font-size:12px;color:#555;line-height:1.55;margin-bottom:8px;">Notre clôture comptable annuelle est fixée au <strong>31 décembre</strong>. Passé cette date, les factures en retard seront automatiquement transmises à notre prestataire de recouvrement externe. Pour éviter cette procédure, nous vous invitons à régulariser votre situation avant le 31 décembre.</div><div style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:4px;">EN</div><div style="font-size:12px;color:#555;line-height:1.55;">Our annual accounting year-end is set for <strong>31 December</strong>. After this date, outstanding invoices will be automatically forwarded to our external debt collection agency. To avoid this process, please settle your balance before 31 December.</div></div></div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{montant_du}}</var><var>{{nb_factures}}</var><var>{{date_echeance}}</var><var>{{hotel_name}}</var><var>{{amount_due}}</var><var>{{nb_invoices}}</var><var>{{due_date}}</var></div>
+  </div>
+
+  <!-- C2 — Relance auto J+15 -->
+  <div class="email-card" id="c2">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p2-color">C2</div></div>
+      <div class="card-info">
+        <div class="card-title">Relance automatique 2 — Pénalités annoncées (J+15) <span class="lang-badge lang-fr">FR</span> <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Ton plus direct. Référence à la 1re relance. Annonce des pénalités potentielles sans les appliquer encore. Invitation au dialogue si difficulté.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : J+15, statut unpaid</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          <span class="pill pill-refonte">Pénalités annoncées · Escalade ton</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p2);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on" style="background:var(--p2);"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val"><var>{{nom_hotel}}</var> — 2e rappel · <var>{{montant_du}}</var> toujours en attente</span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#EF8C38);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#D97706;margin-bottom:12px;">Relance <strong style="font-size:12px;">2</strong> / 3</div>
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Malgré notre relance du <var>{{date_relance_1}}</var>, nous n'avons pas encore reçu le règlement de <var>{{nb_factures}}</var> facture(s) pour un montant total de <strong><var>{{montant_du}}</var></strong>.</div>
+          <div class="e-box warn">
+            <div class="e-row"><span class="e-lbl">Montant en attente</span><span class="e-val"><var>{{montant_du}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Nombre de factures</span><span class="e-val"><var>{{nb_factures}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">1re relance envoyée le</span><span class="e-val"><var>{{date_relance_1}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Régulariser ma situation</span></div>
+          <div class="e-warn-strip red">
+            <span class="e-warn-icon">⚠️</span>
+            <div><strong>Information importante :</strong> en l'absence de règlement, des intérêts de retard (10 % par an) ainsi que des frais de recouvrement (60 € forfaitaires) pourront être appliqués conformément à nos conditions générales.</div>
+          </div>
+          <div class="e-box" style="background:#FFF7ED;border-color:#FB923C;margin-top:12px;"><div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:15px;flex-shrink:0;">📉</span><div style="font-size:12.5px;color:#9A3412;line-height:1.55;"><strong>Impact sur votre visibilité :</strong> en raison de cet impayé, la visibilité de votre établissement sur la plateforme Dayuse sera progressivement réduite jusqu'à la régularisation de votre situation.</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
+            <span style="font-size:15px;flex-shrink:0;">🔄</span>
+            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Évitez les prochaines relances — activez le <strong style="color:#111;">Direct Debit</strong> pour un règlement automatique à chaque échéance.</span>
+            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Activer</span>
+          </div>
+          <div class="e-hr"></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez-nous votre preuve de paiement (référence facture + date de virement) par retour d'email — nous mettrons à jour votre compte immédiatement.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à votre situation, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe recouvrement Dayuse</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">English version (EN — international)</div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val"><var>{{hotel_name}}</var> — 2nd reminder · <var>{{amount_due}}</var> still outstanding</span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#EF8C38);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#D97706;margin-bottom:12px;">Reminder <strong style="font-size:12px;">2</strong> / 3</div>
+          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">Despite our reminder of <var>{{first_reminder_date}}</var>, we have not yet received payment for <var>{{nb_invoices}}</var> invoice(s) totalling <strong><var>{{amount_due}}</var></strong>.</div>
+          <div class="e-box warn">
+            <div class="e-row"><span class="e-lbl">Outstanding amount</span><span class="e-val"><var>{{amount_due}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Number of invoices</span><span class="e-val"><var>{{nb_invoices}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">First reminder sent</span><span class="e-val"><var>{{first_reminder_date}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Settle my account</span></div>
+          <div class="e-warn-strip red">
+            <span class="e-warn-icon">⚠️</span>
+            <div><strong>Important notice:</strong> if this invoice remains unpaid, late penalty interest (10% per annum) and a fixed collection fee (€60 per invoice) may be applied in accordance with our terms and conditions.</div>
+          </div>
+          <div class="e-box" style="background:#FFF7ED;border-color:#FB923C;margin-top:12px;"><div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:15px;flex-shrink:0;">📉</span><div style="font-size:12.5px;color:#9A3412;line-height:1.55;"><strong>Visibility impact:</strong> due to this outstanding balance, your property's ranking on the Dayuse platform may be progressively reduced until payment is received.</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
+            <span style="font-size:15px;flex-shrink:0;">🔄</span>
+            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Avoid future reminders — set up <strong style="color:#111;">Direct Debit</strong> for automatic payment at every due date.</span>
+            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Set up</span>
+          </div>
+          <div class="e-hr"></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Payment already made?</div><div class="e-opt-desc">Send us your proof of payment (invoice reference + transfer date) by return email — we will update your account immediately.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your account, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Collections Team</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    </div>
+    <div style="margin:10px 0 0;border:1.5px dashed #F59E0B;border-radius:6px;overflow:hidden;"><div style="background:#FEF3C7;padding:6px 12px;font-size:10px;font-weight:700;color:#D97706;text-transform:uppercase;letter-spacing:.06em;">🗓 Variante fin d'année — nov / déc — remplacer ou ajouter avant signature</div><div style="padding:10px 12px;background:#FFFBEB;"><div style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:4px;">FR</div><div style="font-size:12px;color:#555;line-height:1.55;margin-bottom:8px;">Rappel important : notre clôture comptable est le <strong>31 décembre</strong>. Les dossiers toujours en retard à cette date seront transmis à un prestataire de recouvrement externe, ce qui entraîne des frais supplémentaires à votre charge.</div><div style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:4px;">EN</div><div style="font-size:12px;color:#555;line-height:1.55;">Important reminder: our accounting year-end is <strong>31 December</strong>. Files still outstanding at that date will be forwarded to an external collection agency, which will incur additional costs for your account.</div></div></div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{montant_du}}</var><var>{{nb_factures}}</var><var>{{date_relance_1}}</var><var>{{hotel_name}}</var><var>{{amount_due}}</var><var>{{nb_invoices}}</var><var>{{first_reminder_date}}</var></div>
+  </div>
+
+  <!-- C3 — Relance auto J+30 -->
+  <div class="email-card" id="c3">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p2-color">C3</div></div>
+      <div class="card-info">
+        <div class="card-title">Relance automatique 3 — Urgente, pénalités appliquées (J+30) <span class="lang-badge lang-fr">FR</span> <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Ton urgent et ferme. Décompte complet capital + pénalités + frais. Réponse requise sous 48h. Dossier transmis au recouvrement avancé si pas de réponse. Dernier email avant Phase 3.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : J+30, statut unpaid</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          <span class="pill pill-refonte">Décompte pénalités · Délai 48h · Escalade max</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p3);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val"><var>{{nom_hotel}}</var> — Urgent · <var>{{montant_du}}</var> impayé(s) — Réponse requise sous 48h</span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#EF4444,#DC2626);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#EF4444;margin-bottom:12px;">Relance <strong style="font-size:12px;">3</strong> / 3</div>
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Malgré nos relances des dernières semaines, nous n'avons toujours pas reçu le règlement de <var>{{nb_factures}}</var> facture(s). <strong>Nous vous demandons de régulariser cette situation dans les 48 heures.</strong></div>
+          <div class="e-box danger">
+            <div class="e-row"><span class="e-lbl">Capital dû</span><span class="e-val"><var>{{montant_du}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Intérêts de retard<span class="e-val red"><var>{{montant_penalites}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Frais forfaitaires de recouvrement (60 €)</span><span class="e-val red"><var>{{frais}}</var></span></div>
+            <div class="e-row e-total-row" style="border-color:#FECACA;">
+              <span class="e-total-lbl">Montant total dû</span>
+              <span class="e-total-val red"><var>{{montant_total}}</var></span>
+            </div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Régler maintenant</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
+            <span style="font-size:15px;flex-shrink:0;">🔄</span>
+            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Évitez les prochaines relances — activez le <strong style="color:#111;">Direct Debit</strong> pour un règlement automatique à chaque échéance.</span>
+            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Activer</span>
+          </div>
+          <div class="e-warn-strip red">
+            <span class="e-warn-icon">🚨</span>
+            <div>Sans règlement avant le <strong><var>{{date_limite}}</var></strong>, des intérêts de retard (taux légal + 10 points) et une indemnité forfaitaire de recouvrement de <strong>60 €</strong> s'appliqueront de plein droit — et votre dossier sera transmis à notre équipe de recouvrement avancée.</div>
+          </div>
+          <div class="e-hr"></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez-nous votre preuve de paiement (référence facture + date de virement) par retour d'email — nous mettrons à jour votre compte immédiatement.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à votre dossier, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe recouvrement Dayuse</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">English version (EN — international)</div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val"><var>{{hotel_name}}</var> — Urgent · <var>{{amount_due}}</var> unpaid — Response required within 48h</span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#EF4444,#DC2626);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#EF4444;margin-bottom:12px;">Reminder <strong style="font-size:12px;">3</strong> / 3</div>
+          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">Despite our previous reminders, we have still not received payment for <var>{{nb_invoices}}</var> invoice(s). <strong>We ask that you settle this matter within 48 hours.</strong></div>
+          <div class="e-box danger">
+            <div class="e-row"><span class="e-lbl">Principal outstanding</span><span class="e-val"><var>{{amount_due}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Late interest</span><span class="e-val red"><var>{{late_interest}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Fixed collection fee (€60)</span><span class="e-val red"><var>{{collection_fee}}</var></span></div>
+            <div class="e-row e-total-row" style="border-color:#FECACA;"><span class="e-total-lbl">Total due</span><span class="e-total-val red"><var>{{total_due}}</var></span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Settle now</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
+            <span style="font-size:15px;flex-shrink:0;">🔄</span>
+            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Avoid future reminders — set up <strong style="color:#111;">Direct Debit</strong> for automatic payment at every due date.</span>
+            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Set up</span>
+          </div>
+          <div class="e-warn-strip red">
+            <span class="e-warn-icon">🚨</span>
+            <div>If payment is not received by <strong><var>{{deadline}}</var></strong>, late interest (statutory rate + 10 points) and the fixed collection fee of <strong>€60</strong> will apply by right — and your file will be escalated to our advanced collections team.</div>
+          </div>
+          <div class="e-hr"></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Payment already made?</div><div class="e-opt-desc">Send us your proof of payment (invoice reference + transfer date) by return email — we will update your account immediately.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your file, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Collections Team</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    </div>
+    <div style="margin:10px 0 0;border:1.5px dashed #F59E0B;border-radius:6px;overflow:hidden;"><div style="background:#FEF3C7;padding:6px 12px;font-size:10px;font-weight:700;color:#D97706;text-transform:uppercase;letter-spacing:.06em;">🗓 Variante fin d'année — nov / déc — remplacer ou ajouter avant signature</div><div style="padding:10px 12px;background:#FFFBEB;"><div style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:4px;">FR</div><div style="font-size:12px;color:#555;line-height:1.55;margin-bottom:8px;"><strong>Dernier avertissement avant clôture comptable.</strong> Notre exercice fiscal se termine le <strong>31 décembre</strong>. Sans règlement avant cette date, votre dossier sera transmis dès le 2 janvier à notre prestataire de recouvrement judiciaire. Des frais d'huissier s'ajouteront alors au montant dû.</div><div style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:4px;">EN</div><div style="font-size:12px;color:#555;line-height:1.55;"><strong>Final warning before year-end close.</strong> Our fiscal year ends on <strong>31 December</strong>. Without payment before that date, your file will be transferred on 2 January to our legal debt recovery agent. Bailiff fees will then be added to the outstanding amount.</div></div></div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{nb_factures}}</var><var>{{montant_du}}</var><var>{{montant_penalites}}</var><var>{{frais}}</var><var>{{montant_total}}</var><var>{{date_limite}}</var><var>{{hotel_name}}</var><var>{{amount_due}}</var><var>{{nb_invoices}}</var><var>{{late_interest}}</var><var>{{collection_fee}}</var><var>{{total_due}}</var><var>{{deadline}}</var></div>
+  </div>
+
+</div><!-- /phase 2 -->
+
+
+<!-- ═══════════════════════ PHASE 3 ═══════════════════════ -->
+<div class="phase-block" id="p3">
+  <div class="phase-header" style="background:var(--p3-light);border-color:var(--p3);">
+    <div>
+      <h2 style="color:var(--p3);">Phase 3 — Warning Bad Payers</h2>
+      <p style="color:var(--p3);">Statut : <strong>STATUS_ACTIVE_WARNING_OUTSTANDING_PAYM_NTE</strong> · Escalade critique · Validation humaine recommandée</p>
+    </div>
+    <span class="phase-count" style="background:var(--p3);color:#fff;">10 emails</span>
+    <div class="sla-band"><div class="sla-node"><span class="sla-tag" style="background:#FFF1F1;color:#EF4444;">A6</span><span class="sla-delay">J+35</span></div><span class="sla-arrow">→</span><div class="sla-node"><span class="sla-tag" style="background:#FFF1F1;color:#EF4444;">A9B</span><span class="sla-delay">J+52</span></div><span class="sla-arrow">→</span><div class="sla-node"><span class="sla-tag" style="background:#FFF1F1;color:#EF4444;">A7</span><span class="sla-delay">J+60</span></div><span class="sla-arrow">→</span><div class="sla-node"><span class="sla-tag" style="background:#FFF1F1;color:#EF4444;">A16</span><span class="sla-delay">J+75</span></div></div>
+  </div>
+
+  <!-- A6 — Warning bad payer -->
+  <div class="email-card" id="a6">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p3-color">A6</div></div>
+      <div class="card-info">
+        <div class="card-title">Warning bad payer — Nouveau palier + échelonnement <span class="lang-badge lang-fr">FR</span> <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Déclenché à partir de 5 factures impayées ou validation humaine. Décompte complet. Propose explicitement un plan de paiement échelonné — ouvre une voie de résolution amiable avant la désactivation.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : ≥ 5 factures impayées / validation humaine</span>
+          <span class="pill pill-manual">Validation humaine recommandée</span>
+          <span class="pill pill-refonte">Échelonnement proposé · CTA double</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p3);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val"><var>{{nom_hotel}}</var> — Situation comptable critique — <var>{{montant_total}}</var> — Action urgente requise</span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#EF4444,#DC2626);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Malgré plusieurs relances, nous constatons que <strong><var>{{nb_factures}}</var> facture(s)</strong> restent impayées sur votre compte. Nous vous invitons à régulariser cette situation <strong>dans les 14 jours</strong> afin d'éviter toute interruption de service.</div>
+          <div class="e-box danger">
+            <div class="e-row"><span class="e-lbl">Capital dû</span><span class="e-val"><var>{{montant_du}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Intérêts de retard (10 %/an)</span><span class="e-val red"><var>{{montant_penalites}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Frais de recouvrement</span><span class="e-val red"><var>{{frais}}</var></span></div>
+            <div class="e-row e-total-row" style="border-color:#FECACA;">
+              <span class="e-total-lbl">Montant total dû</span>
+              <span class="e-total-val red"><var>{{montant_total}}</var></span>
+            </div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Régulariser ma situation</span></div>
+          <div class="e-hr"></div>
+          <div class="e-payment-opt"><div class="e-opt-icon">💳</div><div><div class="e-opt-title">Par carte bancaire</div><div class="e-opt-desc">Portail partenaire · Section "Invoices" · Sélectionnez la facture · Cliquez sur "Pay"</div></div></div>
+          <div class="e-payment-opt"><div class="e-opt-icon">🏦</div><div><div class="e-opt-title">Par virement bancaire</div><div class="e-opt-desc">RIB disponible en pièce jointe. Indiquez impérativement le numéro de facture en référence.</div></div></div>
+          <div class="e-payment-opt"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez votre preuve de paiement par retour d'email — nous interromprons immédiatement cette procédure.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à votre dossier, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe recouvrement Dayuse</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+
+    <div style="margin:10px 0 0;border:1.5px dashed #F59E0B;border-radius:6px;overflow:hidden;"><div style="background:#FEF3C7;padding:6px 12px;font-size:10px;font-weight:700;color:#D97706;text-transform:uppercase;letter-spacing:.06em;">🗓 Variante fin d'année — nov / déc — remplacer ou ajouter avant signature</div><div style="padding:10px 12px;background:#FFFBEB;"><div style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:4px;">FR</div><div style="font-size:12px;color:#555;line-height:1.55;margin-bottom:8px;">Votre situation intervient à quelques semaines de notre clôture comptable du <strong>31 décembre</strong>. Passé cette date, tout dossier en retard sera transmis à notre conseil juridique pour engagement d'une procédure de recouvrement judiciaire.</div><div style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:4px;">EN</div><div style="font-size:12px;color:#555;line-height:1.55;">Your account situation arises just weeks before our <strong>31 December</strong> accounting year-end. After this date, all outstanding files will be referred to our legal counsel for formal debt recovery proceedings.</div></div></div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{nb_factures}}</var><var>{{montant_du}}</var><var>{{montant_penalites}}</var><var>{{frais}}</var><var>{{montant_total}}</var></div>
+  </div>
+
+  <!-- A9B — Rappel J-7 avant suspension -->
+  <div class="email-card" id="a9b">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p3-color" style="position:relative;">A9B<span class="new-ribbon">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Rappel J-7 avant suspension <span class="lang-badge lang-fr">FR</span> <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Rappel automatique envoyé 7 jours avant la date limite fixée dans A9. Ton court et direct — uniquement montant + deadline + CTA. Pas d'options, pas d'explication : l'hôtel a déjà reçu A6 et A9.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : J-7 avant {date_limite} fixée dans A9</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          <span class="pill pill-new">Message nouveau</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p3);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val"><var>{{nom_hotel}}</var> — Suspension dans 7 jours — Paiement requis avant le <var>{{date_limite}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#DC2626,#B91C1C);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Il vous reste <strong>7 jours</strong> pour régulariser votre situation avant la suspension de votre compte.</div>
+          <div class="e-box danger">
+            <div class="e-row"><span class="e-lbl">Montant total dû</span><span class="e-total-val red"><var>{{montant_total}}</var></span></div>
+            <div class="e-row"><span class="e-lbl" style="color:#EF4444;font-weight:700;">Date limite de paiement</span><span class="e-val red" style="font-size:14px;"><var>{{date_limite}}</var></span></div>
+          </div>
+          <div class="e-warn-strip red"><span class="e-warn-icon">🚨</span><div>Sans règlement avant cette date, <strong>votre établissement sera suspendu de dayuse.com</strong> et ne sera plus visible par les voyageurs.</div></div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Payer maintenant</span></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Si vous avez déjà effectué votre paiement dans les dernières 48h, merci d'ignorer ce message — notre système met à jour les statuts sous 2 jours ouvrés.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à votre dossier, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe recouvrement Dayuse</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{montant_total}}</var><var>{{date_limite}}</var></div>
+  </div>
+
+  <!-- A9B EN — J-7 before suspension -->
+  <div class="email-card" id="a9ben">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p3-color" style="position:relative;">A9B<span class="new-ribbon">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Reminder J-7 before suspension <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">English version. Automatic reminder sent 7 days before the deadline set in A9. Short and direct — amount + deadline + CTA only.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Trigger: J-7 before deadline_date set in A9</span>
+          <span class="pill pill-auto">100% Automatic</span>
+          <span class="pill pill-new">New message</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p3);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val"><var>{{hotel_name}}</var> — Suspension in 7 days — Payment required by <var>{{deadline_date}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#DC2626,#B91C1C);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">You have <strong>7 days</strong> to settle your account before it is suspended.</div>
+          <div class="e-box danger">
+            <div class="e-row"><span class="e-lbl">Total amount due</span><span class="e-total-val red"><var>{{total_amount}}</var></span></div>
+            <div class="e-row"><span class="e-lbl" style="color:#EF4444;font-weight:700;">Payment deadline</span><span class="e-val red" style="font-size:14px;"><var>{{deadline_date}}</var></span></div>
+          </div>
+          <div class="e-warn-strip red"><span class="e-warn-icon">🚨</span><div>Without payment by this date, <strong>your property will be suspended from dayuse.com</strong> and will no longer be visible to travellers.</div></div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Pay now</span></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Already paid?</div><div class="e-opt-desc">If you have made your payment within the last 48 hours, please disregard this message — our system updates statuses within 2 business days.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your account, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Collections Team</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{hotel_name}}</var><var>{{total_amount}}</var><var>{{deadline_date}}</var></div>
+  </div>
+
+  <!-- A7 — Désactivation -->
+  <div class="email-card" id="a7">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p3-color" style="position:relative;">A7<span class="new-ribbon">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Désactivation du compte <span class="lang-badge lang-fr">FR</span> <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Email de notification officielle de suspension du compte. Explique les conséquences, le montant restant dû, et la procédure de réactivation. Statut : STATUS_INACTIVE_TMP / CHURN_DISPUTE.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : décision de désactivation validée</span>
+          <span class="pill pill-manual">Décision Account Manager / Finance</span>
+          <span class="pill pill-new">Contenu créé</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p3);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val"><var>{{nom_hotel}}</var> — Votre compte Dayuse a été suspendu — Informations de réactivation</span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:#B91C1C;"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">En raison du non-règlement de vos factures en suspens malgré nos différentes relances, nous avons procédé à la <strong>suspension temporaire de votre compte Dayuse</strong> à compter du <var>{{date_suspension}}</var>.</div>
+          <div class="e-box danger">
+            <div class="e-row"><span class="e-lbl">Statut du compte</span><span class="e-val red">Suspendu ⛔</span></div>
+            <div class="e-row"><span class="e-lbl">Date de suspension</span><span class="e-val"><var>{{date_suspension}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Montant total dû</span><span class="e-total-val red"><var>{{montant_total}}</var></span></div>
+          </div>
+          <div class="e-p" style="font-size:13.5px;color:#333;"><strong>Conséquences de la suspension :</strong></div>
+          <div style="font-size:13px;color:#555;line-height:2;margin-bottom:14px;">
+            · Votre établissement n'est plus visible sur la plateforme dayuse.com<br>
+            · Les nouvelles réservations sont désactivées<br>
+            · Vos réservations en cours restent honorées
+          </div>
+          <div class="e-box" style="background:#FFF7ED;border-color:#FB923C;margin-bottom:14px;"><div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:14px;flex-shrink:0;">📋</span><div style="font-size:12.5px;color:#9A3412;line-height:1.55;">Par ailleurs, des <strong>intérêts de retard de 10 % par an</strong> ainsi que des <strong>frais de recouvrement de 60 €</strong> seront appliqués sur le montant restant dû jusqu'au règlement complet.</div></div></div>
+          <div class="e-escalade-box">
+            <div class="e-esc-title">Comment réactiver votre compte ?</div>
+            <div class="e-esc-text">
+              Le règlement intégral du montant dû (<strong><var>{{montant_total}}</var></strong>) entraîne la réactivation de votre compte sous <strong>24 à 48h ouvrées</strong>.<br><br>
+              Si vous souhaitez discuter d'un plan de paiement ou contester une facture, contactez notre équipe dès aujourd'hui.
+            </div>
+            <div style="margin-top:12px;"><span class="e-btn orange" style="font-size:12.5px;padding:10px 22px;">Régler et réactiver mon compte</span></div>
+          </div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à votre dossier, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe recouvrement Dayuse</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{date_suspension}}</var><var>{{montant_total}}</var></div>
+  </div>
+
+  <!-- A6 EN — Warning bad payer -->
+  <div class="email-card" id="a6en">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p3-color">A6</div></div>
+      <div class="card-info">
+        <div class="card-title">Warning bad payer — Critical account status <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">English version. Triggered at ≥ 5 unpaid invoices or human validation. Full breakdown. Proposes an instalment plan as an amicable resolution before deactivation.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Trigger: ≥ 5 unpaid invoices / human validation</span>
+          <span class="pill pill-manual">Human review recommended</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p3);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val"><var>{{hotel_name}}</var> — Critical account status — <var>{{total_amount}}</var> — Urgent action required</span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#EF4444,#DC2626);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">Despite several reminders, we note that <strong><var>{{nb_invoices}}</var> invoice(s)</strong> remain unpaid on your account. We invite you to settle this situation <strong>within 14 days</strong> to avoid any interruption of service.</div>
+          <div class="e-box danger">
+            <div class="e-row"><span class="e-lbl">Principal due</span><span class="e-val"><var>{{amount_due}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Late interest (10%/year)</span><span class="e-val red"><var>{{late_fees}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Collection fees</span><span class="e-val red"><var>{{collection_fees}}</var></span></div>
+            <div class="e-row e-total-row" style="border-color:#FECACA;">
+              <span class="e-total-lbl">Total amount due</span>
+              <span class="e-total-val red"><var>{{total_amount}}</var></span>
+            </div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Settle my account</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
+            <span style="font-size:15px;flex-shrink:0;">🔄</span>
+            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Avoid future reminders — activate <strong style="color:#111;">Direct Debit</strong> for automatic payment on every due date.</span>
+            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Activate</span>
+          </div>
+          <div class="e-hr"></div>
+          <div class="e-payment-opt"><div class="e-opt-icon">💳</div><div><div class="e-opt-title">By credit card</div><div class="e-opt-desc">Partner portal · "Invoices" section · Select the invoice · Click "Pay"</div></div></div>
+          <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Already paid?</div><div class="e-opt-desc">If you have made your payment within the last 48 hours, please disregard this message — our system updates statuses within 2 business days.</div></div></div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your account, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Collections Team</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{hotel_name}}</var><var>{{nb_invoices}}</var><var>{{amount_due}}</var><var>{{late_fees}}</var><var>{{collection_fees}}</var><var>{{total_amount}}</var></div>
+  </div>
+
+  <!-- A9 EN — Pré-désactivation -->
+
+  <!-- A7 EN — Désactivation -->
+  <div class="email-card" id="a7en">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p3-color" style="position:relative;">A7<span class="new-ribbon">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Account suspension notification <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">English version. Official suspension notification. Explains consequences, outstanding balance, and the reactivation procedure. Status: STATUS_INACTIVE_TMP / CHURN_DISPUTE.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Trigger: suspension decision validated</span>
+          <span class="pill pill-manual">Account Manager / Finance decision</span>
+          <span class="pill pill-new">New content</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p3);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val"><var>{{hotel_name}}</var> — Your Dayuse account has been suspended — Reactivation information</span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:#B91C1C;"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">Due to the non-payment of your outstanding invoices despite our repeated reminders, we have proceeded with the <strong>temporary suspension of your Dayuse account</strong> effective <var>{{suspension_date}}</var>.</div>
+          <div class="e-box danger">
+            <div class="e-row"><span class="e-lbl">Account status</span><span class="e-val red">Suspended ⛔</span></div>
+            <div class="e-row"><span class="e-lbl">Suspension date</span><span class="e-val"><var>{{suspension_date}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Total amount due</span><span class="e-total-val red"><var>{{total_amount}}</var></span></div>
+          </div>
+          <div class="e-p" style="font-size:13.5px;color:#333;"><strong>Consequences of suspension:</strong></div>
+          <div style="font-size:13px;color:#555;line-height:2;margin-bottom:14px;">
+            · Your property is no longer visible on the dayuse.com platform<br>
+            · New bookings are disabled<br>
+            · Your existing bookings will still be honoured
+          </div>
+          <div class="e-box" style="background:#FFF7ED;border-color:#FB923C;margin-bottom:14px;"><div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:14px;flex-shrink:0;">📋</span><div style="font-size:12.5px;color:#9A3412;line-height:1.55;">In addition, a <strong>10% annual late fee</strong> as well as <strong>€60 collection fees</strong> will be applied to the outstanding amount until full settlement.</div></div></div>
+          <div class="e-escalade-box">
+            <div class="e-esc-title">How to reactivate your account?</div>
+            <div class="e-esc-text">
+              Full payment of the amount due (<strong><var>{{total_amount}}</var></strong>) will result in the reactivation of your account within <strong>24 to 48 business hours</strong>.<br><br>
+              If you would like to discuss a payment plan or dispute an invoice, please contact our team today.
+            </div>
+            <div style="margin-top:12px;"><span class="e-btn orange" style="font-size:12.5px;padding:10px 22px;">Settle and reactivate my account</span></div>
+          </div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your account, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Collections Team</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{hotel_name}}</var><var>{{suspension_date}}</var><var>{{total_amount}}</var></div>
+  </div>
+
+  <!-- A16 — Mise en demeure -->
+  <div class="email-card" id="a16">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p3-color" style="position:relative;">A16<span class="new-ribbon">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Mise en demeure — Recouvrement contentieux <span class="lang-badge lang-fr">FR</span> <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Email légal formel envoyé si aucun règlement sous J+75 après l'échéance (15 jours après A7). Constitue une mise en demeure officielle au sens des articles L441-10 et suivants du Code de commerce. Ouvre la voie au recouvrement judiciaire.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : J+75 sans paiement après A7 (J+60)</span>
+          <span class="pill pill-manual">Validation juridique/Finance obligatoire</span>
+          <span class="pill pill-new">Message nouveau</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p3);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val"><var>{{nom_hotel}}</var> — Mise en demeure de payer — Réf. <var>{{ref_dossier}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:#7F1D1D;"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi" style="font-weight:700;">Mise en demeure de payer</div>
+          <div class="e-p" style="font-size:12px;color:#555;margin-bottom:14px;">À l'attention de : <strong><var>{{nom_hotel}}</var></strong> — <var>{{adresse_hotel}}</var></div>
+          <div class="e-p">Malgré la suspension de votre compte le <var>{{date_suspension}}</var> et nos différentes tentatives de contact, le montant dû ci-dessous reste impayé à ce jour.</div>
+          <div class="e-box danger">
+            <div class="e-row"><span class="e-lbl">Référence dossier</span><span class="e-val"><var>{{ref_dossier}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Capital dû</span><span class="e-val"><var>{{montant_capital}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Intérêts de retard (10 %/an depuis <var>{{date_echeance}}</var>)</span><span class="e-val red"><var>{{montant_interets}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Frais de recouvrement</span><span class="e-val red"><var>{{frais_recouvrement}}</var></span></div>
+            <div class="e-row e-total-row" style="border-color:#FECACA;">
+              <span class="e-total-lbl">TOTAL DÛ</span>
+              <span class="e-total-val red"><var>{{montant_total}}</var></span>
+            </div>
+          </div>
+          <div class="e-box" style="background:#FFF1F1;border-color:#FECACA;margin:14px 0;">
+            <div style="font-size:12.5px;color:#7F1D1D;line-height:1.6;">
+              Par la présente, nous vous <strong>mettons en demeure</strong> de régler la somme de <strong><var>{{montant_total}}</var></strong> dans un délai de <strong>15 jours</strong> à compter de la réception de ce courrier électronique.<br><br>
+              À défaut de règlement dans ce délai, nous nous réservons le droit d'engager sans autre préavis une procédure de recouvrement judiciaire, dont les frais seront intégralement mis à votre charge, et/ou de transmettre votre dossier à un prestataire de recouvrement externe.
+            </div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Régler immédiatement</span><span class="e-btn ghost">Contacter notre service juridique</span></div>
+          <div class="e-p" style="font-size:11.5px;color:#888;margin-top:14px;line-height:1.6;">
+            Si vous avez procédé au règlement depuis l'envoi de ce message, veuillez transmettre votre justificatif à <a href="#" style="color:#F5A623;">collections@dayuse.com</a> — ce message sera sans objet.<br>
+            Références légales : articles L441-10 et suivants du Code de commerce · Taux d'intérêt légal majoré de 10 points.
+          </div>
+          <div class="e-sign"><div class="e-sign-pre">Ce message constitue une mise en demeure officielle au sens du droit français.</div><div class="e-sign-name">Le Service Recouvrement Dayuse,</div><div class="e-sign-role">Agissant au nom de DAY USE S.A.S.</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924 — RCS Paris</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{adresse_hotel}}</var><var>{{ref_dossier}}</var><var>{{date_suspension}}</var><var>{{date_echeance}}</var><var>{{montant_capital}}</var><var>{{montant_interets}}</var><var>{{frais_recouvrement}}</var><var>{{montant_total}}</var></div>
+  </div>
+
+  <!-- A16 EN — Formal demand for payment -->
+  <div class="email-card" id="a16en">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p3-color" style="position:relative;">A16<span class="new-ribbon">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Formal demand for payment — Debt recovery <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">English version. Formal legal notice sent if no payment by J+75. Opens the path to judicial debt recovery. Requires legal/Finance validation before sending.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Trigger: J+75, no payment after A7 (J+60)</span>
+          <span class="pill pill-manual">Legal / Finance validation required</span>
+          <span class="pill pill-new">New message</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p3);">
+          <div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val"><var>{{hotel_name}}</var> — Formal demand for payment — Ref. <var>{{case_ref}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:#7F1D1D;"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi" style="font-weight:700;">Formal demand for payment</div>
+          <div class="e-p" style="font-size:12px;color:#555;margin-bottom:14px;">Addressed to: <strong><var>{{hotel_name}}</var></strong> — <var>{{hotel_address}}</var></div>
+          <div class="e-p">Despite the suspension of your account on <var>{{suspension_date}}</var> and our multiple contact attempts, the outstanding balance below remains unpaid to date.</div>
+          <div class="e-box danger">
+            <div class="e-row"><span class="e-lbl">Case reference</span><span class="e-val"><var>{{case_ref}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Principal</span><span class="e-val"><var>{{principal_amount}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Late interest (10%/year since <var>{{due_date}}</var>)</span><span class="e-val red"><var>{{interest_amount}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Collection fees</span><span class="e-val red"><var>{{collection_fees}}</var></span></div>
+            <div class="e-row e-total-row" style="border-color:#FECACA;">
+              <span class="e-total-lbl">TOTAL DUE</span>
+              <span class="e-total-val red"><var>{{total_amount}}</var></span>
+            </div>
+          </div>
+          <div class="e-box" style="background:#FFF1F1;border-color:#FECACA;margin:14px 0;">
+            <div style="font-size:12.5px;color:#7F1D1D;line-height:1.6;">
+              By this notice, we hereby <strong>formally demand</strong> that you pay the sum of <strong><var>{{total_amount}}</var></strong> within <strong>15 days</strong> of receiving this email.<br><br>
+              Should payment not be received within this period, we reserve the right to initiate, without further notice, judicial debt recovery proceedings — the costs of which will be borne entirely by you — and/or to refer your file to an external debt collection agency.
+            </div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Pay immediately</span><span class="e-btn ghost">Contact our legal team</span></div>
+          <div class="e-p" style="font-size:11.5px;color:#888;margin-top:14px;line-height:1.6;">
+            If you have already made payment since receiving this notice, please send your proof of payment to <a href="#" style="color:#F5A623;">collections@dayuse.com</a> — this notice will then be void.<br>
+            Legal references: French Commercial Code, articles L441-10 et seq. · Statutory interest rate plus 10 percentage points.
+          </div>
+          <div class="e-sign"><div class="e-sign-pre">This message constitutes a formal legal notice under French law.</div><div class="e-sign-name">The Dayuse Collections Department,</div><div class="e-sign-role">Acting on behalf of DAY USE S.A.S.</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924 — RCS Paris</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{hotel_name}}</var><var>{{hotel_address}}</var><var>{{case_ref}}</var><var>{{suspension_date}}</var><var>{{due_date}}</var><var>{{principal_amount}}</var><var>{{interest_amount}}</var><var>{{collection_fees}}</var><var>{{total_amount}}</var></div>
+  </div>
+
+</div><!-- /phase 3 -->
+
+
+<!-- ═══════════════════════ PHASE 4 ═══════════════════════ -->
+<div class="phase-block" id="p4">
+  <div class="phase-header" style="background:var(--p4-light);border-color:var(--p4);">
+    <div>
+      <h2 style="color:#065F46;">Phase 4 — Résolution</h2>
+      <p style="color:#065F46;">Déclencheur : paiement reçu · Statut : <strong>STATUS_ACTIVE</strong> · Clôture positive du cycle</p>
+    </div>
+    <span class="phase-count" style="background:var(--p4);color:#fff;">2 emails</span>
+  </div>
+
+  <!-- D1 -->
+  <div class="email-card" id="d1">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p4-color" style="position:relative;">D1<span class="new-ribbon" style="background:var(--p4);">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Confirmation de paiement reçu <span class="lang-badge lang-fr">FR</span> <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Email de clôture positive. Envoyé automatiquement à réception du paiement dans NetSuite. Évite les relances post-paiement, renforce la relation partenaire. Message manquant dans le cycle actuel.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : paiement reçu / statut "paid" dans NetSuite</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          <span class="pill pill-new">Message nouveau — manquant dans le cycle actuel</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p4);">
+          <div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">✓ Paiement reçu — Merci <var>{{nom_hotel}}</var> — Votre compte est à jour</span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#10B981,#34D399);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Nous avons bien reçu votre règlement. Votre compte est désormais à jour — merci pour votre réactivité.</div>
+          <div class="e-box success">
+            <div class="e-row"><span class="e-lbl">Montant réglé</span><span class="e-val green"><var>{{montant_paye}}</var> ✓</span></div>
+            <div class="e-row"><span class="e-lbl">Date de réception</span><span class="e-val"><var>{{date_paiement}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Statut du compte</span><span class="e-val green">À jour ✓</span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Consulter mon compte</span></div>
+          <div class="e-p" style="font-size:13px;color:#555;">Nous vous remercions pour votre confiance et sommes ravis de poursuivre notre collaboration. N'hésitez pas à nous contacter pour toute question.</div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à votre compte, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{montant_paye}}</var><var>{{date_paiement}}</var></div>
+  </div>
+
+  <!-- D1 EN — Paiement reçu -->
+  <div class="email-card" id="d1en">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p4-color" style="position:relative;">D1<span class="new-ribbon" style="background:var(--p4);">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Payment confirmation received <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">English version. Positive closing email. Sent automatically upon payment receipt in NetSuite. Prevents post-payment reminders, strengthens the partner relationship.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Trigger: payment received / "paid" status in NetSuite</span>
+          <span class="pill pill-auto">100% Automatic</span>
+          <span class="pill pill-new">New — missing from current cycle</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p4);">
+          <div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val">✓ Payment received — Thank you <var>{{hotel_name}}</var> — Your account is up to date</span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,#10B981,#34D399);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">We have successfully received your payment. Your account is now up to date — thank you for your prompt action.</div>
+          <div class="e-box success">
+            <div class="e-row"><span class="e-lbl">Amount settled</span><span class="e-val green"><var>{{amount_paid}}</var> ✓</span></div>
+            <div class="e-row"><span class="e-lbl">Receipt date</span><span class="e-val"><var>{{payment_date}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Account status</span><span class="e-val green">Up to date ✓</span></div>
+          </div>
+          <div class="e-btn-wrap"><span class="e-btn orange">View my account</span></div>
+          <div class="e-p" style="font-size:13px;color:#555;">Thank you for your trust — we look forward to continuing our partnership. Please don't hesitate to reach out if you have any questions.</div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your account, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{hotel_name}}</var><var>{{amount_paid}}</var><var>{{payment_date}}</var></div>
+  </div>
+
+</div><!-- /phase 4 -->
+
+
+<!-- ═══════════════════════ PHASE 5 ═══════════════════════ -->
+<div class="phase-block" id="p5">
+  <div class="phase-header" style="background:var(--p5-light);border-color:var(--p5);">
+    <div>
+      <h2 style="color:#5B21B6;">Phase 5 — Réactivation</h2>
+      <p style="color:#5B21B6;">Déclencheur : accord et paiement après suspension · Statut : <strong>STATUS_ACTIVE</strong> (réactivé)</p>
+    </div>
+    <span class="phase-count" style="background:var(--p5);color:#fff;">4 emails</span>
+  </div>
+
+  <!-- A8 -->
+  <div class="email-card" id="a8">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p4-color" style="position:relative;">A8<span class="new-ribbon" style="background:var(--p4);">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Réactivation après paiement post-suspension <span class="lang-badge lang-fr">FR</span> <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Envoyé après règlement complet d'un compte suspendu (Phase 3/C3). Confirme la réactivation, clôture le dossier contentieux, réamorce la relation commerciale.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : paiement reçu après suspension C3</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          <span class="pill pill-new">Message nouveau</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p4);">
+          <div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">✓ Votre compte Dayuse est réactivé — Bienvenue à nouveau <var>{{nom_hotel}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,var(--p4),#34D399);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Nous avons bien reçu votre règlement de <strong><var>{{montant_paye}}</var></strong>. Votre compte Dayuse est désormais <strong>pleinement réactivé</strong>.</div>
+          <div class="e-box success">
+            <div class="e-row"><span class="e-lbl">Montant réglé</span><span class="e-val green"><var>{{montant_paye}}</var> ✓</span></div>
+            <div class="e-row"><span class="e-lbl">Date de réactivation</span><span class="e-val"><var>{{date_reactivation}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Statut du compte</span><span class="e-val green">Actif ✓</span></div>
+          </div>
+          <div class="e-p">Votre établissement est à nouveau visible sur la plateforme dayuse.com et vos réservations peuvent reprendre normalement.</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Accéder à mon portail</span></div>
+          <div class="e-box" style="background:#EFF6FF;border-color:#BFDBFE;margin-top:14px;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="font-size:16px;flex-shrink:0;">ℹ️</span>
+              <div style="font-size:12.5px;color:#1E40AF;line-height:1.6;">
+                En cas de 2e suspension suivie d'un paiement, le <strong>Direct Debit sera activé automatiquement</strong> sur votre compte — vous recevrez une confirmation par email (A15). <a href="#" style="color:#1E40AF;font-weight:600;text-decoration:none;">En savoir plus →</a>
+              </div>
+            </div>
+          </div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à la réactivation de votre compte, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{montant_paye}}</var><var>{{date_reactivation}}</var></div>
+  </div>
+
+  <!-- A8 EN — Réactivation -->
+  <div class="email-card" id="a8en">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p4-color" style="position:relative;">A8<span class="new-ribbon" style="background:var(--p4);">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Reactivation after post-suspension payment <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">English version. Sent after full settlement of a suspended account (Phase 3/C3). Confirms reactivation, closes the dispute file, and re-engages the commercial relationship.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Trigger: payment received after C3 suspension</span>
+          <span class="pill pill-auto">100% Automatic</span>
+          <span class="pill pill-new">New message</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p4);">
+          <div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val">✓ Your Dayuse account has been reactivated — Welcome back <var>{{hotel_name}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,var(--p4),#34D399);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">We have received your payment of <strong><var>{{amount_paid}}</var></strong>. Your Dayuse account is now <strong>fully reactivated</strong>.</div>
+          <div class="e-box success">
+            <div class="e-row"><span class="e-lbl">Amount settled</span><span class="e-val green"><var>{{amount_paid}}</var> ✓</span></div>
+            <div class="e-row"><span class="e-lbl">Reactivation date</span><span class="e-val"><var>{{reactivation_date}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Account status</span><span class="e-val green">Active ✓</span></div>
+          </div>
+          <div class="e-p">Your property is once again visible on the dayuse.com platform and new bookings can resume as normal.</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Access my portal</span></div>
+          <div class="e-box" style="background:#EFF6FF;border-color:#BFDBFE;margin-top:14px;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="font-size:16px;flex-shrink:0;">ℹ️</span>
+              <div style="font-size:12.5px;color:#1E40AF;line-height:1.6;">
+                In the event of a 2nd suspension followed by payment, <strong>Direct Debit will be automatically activated</strong> on your account — you will receive a confirmation email (A15). <a href="#" style="color:#1E40AF;font-weight:600;text-decoration:none;">Learn more →</a>
+              </div>
+            </div>
+          </div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your account, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{hotel_name}}</var><var>{{amount_paid}}</var><var>{{reactivation_date}}</var></div>
+  </div>
+
+  <!-- A15 — Réactivation 2e suspension + DD activé automatiquement -->
+  <div class="email-card" id="a15">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p4-color" style="position:relative;">A15<span class="new-ribbon" style="background:var(--p4);">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Réactivation post-2e suspension — Direct Debit activé <span class="lang-badge lang-fr">FR</span> <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Envoyé lors de la 2e réactivation (après une 2e suspension). Confirme la réactivation ET l'activation automatique du Direct Debit conformément aux CGU. Deux cas traités : partenaire déjà DD (confirmation) et partenaire sans DD (activation).</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Déclencheur : 2e paiement reçu après 2e suspension</span>
+          <span class="pill pill-auto">100% Automatique</span>
+          <span class="pill pill-new">Message nouveau</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p4);">
+          <div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">✓ Votre compte Dayuse est réactivé — Direct Debit activé automatiquement — <var>{{nom_hotel}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,var(--p4),#34D399);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Nous avons bien reçu votre règlement de <strong><var>{{montant_paye}}</var></strong>. Votre compte Dayuse est désormais <strong>pleinement réactivé</strong>.</div>
+          <div class="e-box success">
+            <div class="e-row"><span class="e-lbl">Montant réglé</span><span class="e-val green"><var>{{montant_paye}}</var> ✓</span></div>
+            <div class="e-row"><span class="e-lbl">Date de réactivation</span><span class="e-val"><var>{{date_reactivation}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Statut du compte</span><span class="e-val green">Actif ✓</span></div>
+            <div class="e-row"><span class="e-lbl">Direct Debit</span><span class="e-val green">Activé automatiquement ✓</span></div>
+          </div>
+          <div class="e-p">Votre établissement est à nouveau visible sur la plateforme dayuse.com et vos réservations peuvent reprendre normalement.</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Accéder à mon portail</span></div>
+          <div class="e-box" style="background:#EFF6FF;border-color:#BFDBFE;margin-top:14px;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="font-size:18px;flex-shrink:0;">ℹ️</span>
+              <div style="font-size:12.5px;color:#1E40AF;line-height:1.65;">
+                <strong style="display:block;margin-bottom:6px;font-size:13px;">Le Direct Debit a été activé automatiquement sur votre compte.</strong>
+                Suite à cette 2e réactivation, le prélèvement automatique Direct Debit est désormais actif conformément à nos conditions générales. À chaque échéance, vos factures Dayuse seront prélevées automatiquement sur votre IBAN enregistré.<br><br>
+                <strong>Comment ça fonctionne :</strong><br>
+                · Vous recevrez A12 (avis de prélèvement) 3 jours avant chaque échéance<br>
+                · Le prélèvement s'effectue automatiquement à la date d'échéance<br>
+                · Vous pouvez consulter et gérer votre mandat depuis votre portail (Finance → Prélèvement automatique)<br><br>
+                <a href="#" style="color:#1E40AF;font-weight:600;text-decoration:none;">Accéder aux paramètres Direct Debit →</a>
+              </div>
+            </div>
+          </div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à votre compte, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{montant_paye}}</var><var>{{date_reactivation}}</var></div>
+  </div>
+
+  <!-- A15 EN — Reactivation 2nd suspension + DD auto-activated -->
+  <div class="email-card" id="a15en">
+    <div class="card-meta">
+      <div class="card-ref-wrap"><div class="card-ref p4-color" style="position:relative;">A15<span class="new-ribbon" style="background:var(--p4);">NEW</span></div></div>
+      <div class="card-info">
+        <div class="card-title">Post-2nd suspension reactivation — Direct Debit activated <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">English version. Sent on the 2nd reactivation. Confirms reactivation AND automatic Direct Debit activation per T&Cs.</div>
+        <div class="card-pills">
+          <span class="pill pill-gray">Trigger: 2nd payment received after 2nd suspension</span>
+          <span class="pill pill-auto">100% Automatic</span>
+          <span class="pill pill-new">New message</span>
+        </div>
+        <div class="urgency-row" style="color:var(--p4);">
+          <div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="email-shell">
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val">✓ Your Dayuse account has been reactivated — Direct Debit automatically activated — <var>{{hotel_name}}</var></span></div>
+      <div class="email-body">
+        <div class="e-stripe" style="background:linear-gradient(90deg,var(--p4),#34D399);"></div>
+        <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+        <div class="e-body">
+          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">We have received your payment of <strong><var>{{amount_paid}}</var></strong>. Your Dayuse account is now <strong>fully reactivated</strong>.</div>
+          <div class="e-box success">
+            <div class="e-row"><span class="e-lbl">Amount settled</span><span class="e-val green"><var>{{amount_paid}}</var> ✓</span></div>
+            <div class="e-row"><span class="e-lbl">Reactivation date</span><span class="e-val"><var>{{reactivation_date}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Account status</span><span class="e-val green">Active ✓</span></div>
+            <div class="e-row"><span class="e-lbl">Direct Debit</span><span class="e-val green">Automatically activated ✓</span></div>
+          </div>
+          <div class="e-p">Your property is once again visible on the dayuse.com platform and new bookings can resume as normal.</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Access my portal</span></div>
+          <div class="e-box" style="background:#EFF6FF;border-color:#BFDBFE;margin-top:14px;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="font-size:18px;flex-shrink:0;">ℹ️</span>
+              <div style="font-size:12.5px;color:#1E40AF;line-height:1.65;">
+                <strong style="display:block;margin-bottom:6px;font-size:13px;">Direct Debit has been automatically activated on your account.</strong>
+                Following this 2nd reactivation, Direct Debit is now active in accordance with our terms and conditions. Each invoice will be automatically debited from your registered IBAN on the due date.<br><br>
+                <strong>How it works:</strong><br>
+                · You will receive A12 (debit notice) 3 days before each due date<br>
+                · The payment is automatically processed on the due date<br>
+                · You can view and manage your mandate from your portal (Finance → Direct Debit)<br><br>
+                <a href="#" style="color:#1E40AF;font-weight:600;text-decoration:none;">Manage Direct Debit settings →</a>
+              </div>
+            </div>
+          </div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your account, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+        </div>
+        <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
+      </div>
+    </div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{hotel_name}}</var><var>{{amount_paid}}</var><var>{{reactivation_date}}</var></div>
+  </div>
+
+</div><!-- /phase 5 -->
+
+<div style="height:40px;"></div>
+</main>
+</div>
+
+<script>
+
+function goTo(id){
+  document.getElementById('page-home').style.display='none';
+  document.getElementById('page-detail').style.display='block';
+  const lbl=document.getElementById('detail-label');
+  if(lbl){lbl.textContent='Email '+id.toUpperCase();}
+  setTimeout(()=>{
+    const el=document.getElementById(id);
+    if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
+  },80);
+}
+function goHome(){
+  document.getElementById('page-detail').style.display='none';
+  document.getElementById('page-home').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function scrollTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
+function e(id){event.stopPropagation();document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
+
+
+const sections=[...document.querySelectorAll('.email-card,.phase-block')];
+const links=[...document.querySelectorAll('.sb-item')];
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      const id=en.target.id;
+      links.forEach(l=>l.classList.remove('active'));
+      const a=document.querySelector(`.sb-item[href="#${id}"]`);
+      if(a){a.classList.add('active');a.style.background='rgba(255,255,255,.1)';}
+    }
+  });
+},{threshold:.25,rootMargin:'-60px 0px 0px 0px'});
+sections.forEach(s=>obs.observe(s));
+</script>
+</div><!-- /page-detail -->
+</body>
+</html>

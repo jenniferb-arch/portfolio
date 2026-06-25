@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — Jennifer Boursinhac</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f6f5f2;
+      --surface: #ffffff;
+      --surface2: #f0efe9;
+      --border: rgba(0,0,0,0.09);
+      --border-md: rgba(0,0,0,0.16);
+      --text1: #18181a;
+      --text2: #6b6a66;
+      --text3: #a8a7a2;
+      --accent: #534AB7;
+      --accent-light: #EEEDFE;
+      --radius: 14px;
+      --radius-sm: 9px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #18181a;
+        --surface: #222224;
+        --surface2: #2a2a2c;
+        --border: rgba(255,255,255,0.08);
+        --border-md: rgba(255,255,255,0.16);
+        --text1: #f0efea;
+        --text2: #9a9994;
+        --text3: #5a5a56;
+        --accent: #AFA9EC;
+        --accent-light: #26215C;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text1);
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .layout { display: flex; min-height: 100vh; }
+
+    nav {
+      width: 220px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 0.5px solid var(--border);
+      padding: 2rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 2rem;
+    }
+    .nav-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--accent-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 500; color: var(--accent);
+      flex-shrink: 0;
+    }
+    .nav-brand-text { font-size: 13px; font-weight: 500; color: var(--text1); line-height: 1.3; }
+    .nav-brand-sub { font-size: 11px; color: var(--text2); }
+
+    .nav-label {
+      font-size: 10px; font-weight: 500; color: var(--text3);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0 6px; margin: 1.25rem 0 0.5rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 8px; border-radius: var(--radius-sm);
+      font-size: 13px; color: var(--text2);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text1); }
+    .nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 500; }
+    .nav-item .nav-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .nav-count {
+      margin-left: auto; font-size: 11px;
+      background: var(--surface2); color: var(--text2);
+      border-radius: 99px; padding: 1px 7px;
+    }
+    .nav-item.active .nav-count { background: var(--accent-light); color: var(--accent); }
+
+    /* ── Main ── */
+    main { flex: 1; padding: 2.5rem 2.5rem 4rem; min-width: 0; }
+
+    .top-bar {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 2rem;
+    }
+    .search-wrap {
+      flex: 1; position: relative; max-width: 380px;
+    }
+    .search-wrap svg {
+      position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+      width: 15px; height: 15px; color: var(--text3); pointer-events: none;
+    }
+    #search {
+      width: 100%; padding: 8px 12px 8px 34px;
+      font-size: 13px;
+      border: 0.5px solid var(--border-md);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text1);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    #search:focus { border-color: var(--accent); }
+    #search::placeholder { color: var(--text3); }
+
+    .sort-select {
+      font-size: 12px; padding: 7px 10px;
+      border: 0.5px solid var(--border-md);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text2);
+      cursor: pointer; outline: none;
+    }
+
+    /* ── Section title ── */
+    .section-head {
+      display: flex; align-items: baseline; gap: 8px;
+      margin-bottom: 1.25rem;
+    }
+    .section-head h2 { font-size: 15px; font-weight: 500; color: var(--text1); }
+    .section-head span { font-size: 13px; color: var(--text3); }
+
+    /* ── Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.1rem 1rem;
+      display: flex; flex-direction: column; gap: 11px;
+      text-decoration: none; color: inherit;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.12s, box-shadow 0.15s;
+    }
+    .card:hover {
+      border-color: var(--border-md);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .card-emoji {
+      width: 38px; height: 38px; border-radius: var(--radius-sm);
+      background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .card-date { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+    .card-title { font-size: 14px; font-weight: 500; line-height: 1.4; }
+    .card-desc { font-size: 12px; color: var(--text2); line-height: 1.6; flex: 1; }
+
+    .card-footer { display: flex; gap: 5px; flex-wrap: wrap; }
+    .badge {
+      font-size: 10px; font-weight: 500; padding: 2px 8px;
+      border-radius: 99px;
+    }
+    .badge-design   { background: #E1F5EE; color: #085041; }
+    .badge-proto    { background: #FAEEDA; color: #633806; }
+    .badge-artifact { background: #FAECE7; color: #4A1B0C; }
+    .badge-data     { background: #E6F1FB; color: #042C53; }
+    .badge-ui       { background: #EEEDFE; color: #26215C; }
+    .badge-autre    { background: #F1EFE8; color: #2C2C2A; }
+
+    @media (prefers-color-scheme: dark) {
+      .badge-design   { background: #04342C; color: #9FE1CB; }
+      .badge-proto    { background: #412402; color: #FAC775; }
+      .badge-artifact { background: #4A1B0C; color: #F5C4B3; }
+      .badge-data     { background: #042C53; color: #B5D4F4; }
+      .badge-ui       { background: #26215C; color: #AFA9EC; }
+      .badge-autre    { background: #2C2C2A; color: #D3D1C7; }
+    }
+
+    /* ── Empty state ── */
+    .empty {
+      grid-column: 1 / -1;
+      text-align: center; padding: 4rem 2rem;
+      color: var(--text3); font-size: 14px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .layout { flex-direction: column; }
+      nav { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; padding: 1rem; gap: 6px; }
+      .nav-brand { margin-bottom: 0; margin-right: auto; }
+      .nav-label { display: none; }
+      main { padding: 1.5rem 1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <nav id="nav">
+    <div class="nav-brand">
+      <div class="nav-avatar">JB</div>
+      <div>
+        <div class="nav-brand-text">Jennifer B.</div>
+        <div class="nav-brand-sub">Mes projets</div>
+      </div>
+    </div>
+    <!-- Rempli dynamiquement -->
+  </nav>
+
+  <main>
+    <div class="top-bar">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="search" type="text" placeholder="Rechercher un projet…" autocomplete="off" />
+      </div>
+      <select class="sort-select" id="sort">
+        <option value="recent">Plus récents</option>
+        <option value="alpha">A → Z</option>
+      </select>
+    </div>
+
+    <div class="section-head">
+      <h2 id="section-title">Tous les projets</h2>
+      <span id="section-count"></span>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </main>
+
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════
+   PROJETS — ajoute tes projets ici !
+   Chaque entrée : { title, desc, url, icon, tags, date }
+   tags possibles : "design" | "proto" | "artifact" | "data" | "ui" | "autre"
+   ════════════════════════════════════════════════════════ */
+const PROJECTS = [
+  {
+    title: "Email Templates",
+    desc: "Gabarits d'emails HTML responsive et personnalisables.",
+    url: "email-templates.html",
+    icon: "✉️",
+    tags: ["design", "artifact"],
+    date: "2025-06"
+  },
+
+  /* ── Ajoute tes projets ici, exemple :
+  {
+    title: "Nom du projet",
+    desc: "Courte description de ce que fait ce projet.",
+    url: "mon-fichier.html",   // ou une URL complète https://...
+    icon: "🎨",               // un emoji pour représenter le projet
+    tags: ["proto"],          // un ou plusieurs tags
+    date: "2025-06"
+  },
+  ── */
+];
+
+/* ── Tags config ── */
+const TAG_CONFIG = {
+  design:   { label: "Design",    dot: "#1D9E75" },
+  proto:    { label: "Prototype", dot: "#BA7517" },
+  artifact: { label: "Artifact",  dot: "#D85A30" },
+  data:     { label: "Données",   dot: "#378ADD" },
+  ui:       { label: "UI",        dot: "#534AB7" },
+  autre:    { label: "Autre",     dot: "#888780" },
+};
+
+/* ── State ── */
+let activeFilter = "all";
+let searchQuery = "";
+let sortMode = "recent";
+
+/* ── Nav ── */
+function buildNav() {
+  const nav = document.getElementById("nav");
+  const allBtn = navItem("all", "Tous les projets");
+  nav.appendChild(allBtn);
+
+  const label = document.createElement("div");
+  label.className = "nav-label";
+  label.textContent = "Catégories";
+  nav.appendChild(label);
+
+  const usedTags = [...new Set(PROJECTS.flatMap(p => p.tags))].sort();
+  usedTags.forEach(tag => {
+    const cfg = TAG_CONFIG[tag] || { label: tag, dot: "#888" };
+    const item = navItem(tag, cfg.label, cfg.dot);
+    nav.appendChild(item);
+  });
+}
+
+function navItem(filter, label, dotColor) {
+  const btn = document.createElement("button");
+  btn.className = "nav-item" + (filter === activeFilter ? " active" : "");
+  btn.dataset.filter = filter;
+
+  if (dotColor) {
+    const dot = document.createElement("div");
+    dot.className = "nav-dot";
+    dot.style.background = dotColor;
+    btn.appendChild(dot);
+  }
+
+  const span = document.createElement("span");
+  span.textContent = label;
+  btn.appendChild(span);
+
+  const count = document.createElement("span");
+  count.className = "nav-count";
+  count.dataset.countFor = filter;
+  count.textContent = filter === "all" ? PROJECTS.length : PROJECTS.filter(p => p.tags.includes(filter)).length;
+  btn.appendChild(count);
+
+  btn.addEventListener("click", () => {
+    activeFilter = filter;
+    document.querySelectorAll(".nav-item").forEach(b => b.classList.toggle("active", b.dataset.filter === filter));
+    render();
+  });
+  return btn;
+}
+
+/* ── Render ── */
+function render() {
+  const grid = document.getElementById("grid");
+  let list = PROJECTS.filter(p => {
+    const matchFilter = activeFilter === "all" || p.tags.includes(activeFilter);
+    const matchSearch = !searchQuery || p.title.toLowerCase().includes(searchQuery) || p.desc.toLowerCase().includes(searchQuery);
+    return matchFilter && matchSearch;
+  });
+
+  if (sortMode === "alpha") {
+    list.sort((a, b) => a.title.localeCompare(b.title, "fr"));
+  } else {
+    list.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  }
+
+  document.getElementById("section-title").textContent =
+    activeFilter === "all" ? "Tous les projets" : (TAG_CONFIG[activeFilter]?.label || activeFilter);
+  document.getElementById("section-count").textContent =
+    list.length > 0 ? list.length + " projet" + (list.length > 1 ? "s" : "") : "";
+
+  grid.innerHTML = "";
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty">Aucun projet trouvé.</div>';
+    return;
+  }
+
+  list.forEach(p => {
+    const a = document.createElement("a");
+    a.className = "card";
+    a.href = p.url || "#";
+    if (p.url && p.url.startsWith("http")) a.target = "_blank";
+
+    const dateStr = p.date ? p.date.replace("-", " / ") : "";
+
+    a.innerHTML = `
+      <div class="card-top">
+        <div class="card-emoji">${p.icon || "📄"}</div>
+        <span class="card-date">${dateStr}</span>
+      </div>
+      <div class="card-title">${p.title}</div>
+      <div class="card-desc">${p.desc}</div>
+      <div class="card-footer">
+        ${p.tags.map(t => `<span class="badge badge-${t}">${TAG_CONFIG[t]?.label || t}</span>`).join("")}
+      </div>
+    `;
+    grid.appendChild(a);
+  });
+}
+
+/* ── Events ── */
+document.getElementById("search").addEventListener("input", e => {
+  searchQuery = e.target.value.toLowerCase().trim();
+  render();
+});
+document.getElementById("sort").addEventListener("change", e => {
+  sortMode = e.target.value;
+  render();
+});
+
+buildNav();
+render();
+</script>
+</body>
+</html>
