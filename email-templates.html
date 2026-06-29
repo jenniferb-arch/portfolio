@@ -14,13 +14,16 @@
   --p4:#10B981; --p4-light:#F0FDF4; --p4-mid:#10B98120;
   --p5:#8B5CF6; --p5-light:#F5F3FF; --p5-mid:#8B5CF620;
   --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --header-h:70px;
+  --frise-h:76px;
+  --nav-total:calc(var(--header-h) + var(--frise-h));
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:var(--font);background:var(--dy-bg);color:var(--dy-black);display:flex;flex-direction:column;min-height:100vh;}
 
 /* ── FRISE ── */
-#frise{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--dy-border);box-shadow:0 2px 8px rgba(0,0,0,.07);}
+#frise{position:sticky;top:var(--header-h);z-index:100;background:#fff;border-bottom:1px solid var(--dy-border);box-shadow:0 2px 8px rgba(0,0,0,.07);}
 .frise-inner{display:flex;align-items:stretch;overflow-x:auto;}
 .frise-phase{flex:1;min-width:160px;display:flex;flex-direction:column;cursor:pointer;transition:background .15s;border-right:1px solid var(--dy-border);}
 .frise-phase:last-child{border-right:none;}
@@ -34,7 +37,7 @@ body{font-family:var(--font);background:var(--dy-bg);color:var(--dy-black);displ
 
 /* ── LAYOUT ── */
 .layout{display:flex;flex:1;}
-aside{width:220px;min-width:220px;background:#1A1A1A;position:sticky;top:57px;height:calc(100vh - 57px);overflow-y:auto;display:flex;flex-direction:column;}
+aside{width:220px;min-width:220px;background:#1A1A1A;position:sticky;top:var(--nav-total);height:calc(100vh - var(--nav-total));overflow-y:auto;display:flex;flex-direction:column;}
 .sb-section{padding:12px 14px 4px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3);}
 .sb-item{display:flex;align-items:center;gap:8px;padding:7px 14px;margin:1px 6px;border-radius:6px;cursor:pointer;font-size:12px;color:rgba(255,255,255,.6);transition:background .12s,color .12s;text-decoration:none;}
 .sb-item:hover{background:rgba(255,255,255,.07);color:#fff;}
@@ -45,14 +48,14 @@ aside{width:220px;min-width:220px;background:#1A1A1A;position:sticky;top:57px;he
 main{flex:1;padding:28px 32px;overflow-y:auto;max-width:calc(100vw - 220px);}
 
 /* ── PHASE HEADER ── */
-.phase-block{margin-bottom:48px;scroll-margin-top:64px;}
+.phase-block{margin-bottom:48px;scroll-margin-top:calc(var(--nav-total) + 8px);}
 .phase-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:14px 20px;border-radius:10px;border-left:4px solid;}
 .phase-header h2{font-size:15px;font-weight:700;}
 .phase-header p{font-size:12px;opacity:.75;margin-top:2px;}
 .phase-count{margin-left:auto;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;}
 
 /* ── EMAIL CARD ── */
-.email-card{margin-bottom:32px;scroll-margin-top:72px;}
+.email-card{margin-bottom:32px;scroll-margin-top:calc(var(--nav-total) + 8px);}
 .card-meta{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
 .card-ref{font-size:18px;font-weight:900;letter-spacing:-.5px;flex-shrink:0;width:44px;text-align:center;padding-top:2px;}
 .card-info{flex:1;}
@@ -189,9 +192,9 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
 .sla-delay{font-size:9px;color:#888;font-weight:600;}
 .sla-arrow{font-size:10px;color:#CBD5E1;margin:0 2px;align-self:flex-start;margin-top:4px;}
 
-/* ── HOME PAGE ── */
-#page-home{display:block;min-height:100vh;background:var(--dy-bg);padding:0 0 40px;}
-#page-detail{display:none;}
+/* ── SINGLE PAGE ── */
+#page-home{display:block;background:var(--dy-bg);padding:0 0 0;}
+#page-detail{display:block;}
 
 .home-header{background:#fff;border-bottom:1px solid var(--dy-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.06);}
 .home-brand{font-size:22px;font-weight:900;color:var(--dy-black);letter-spacing:-.02em;}
@@ -248,7 +251,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
       <div class="home-brand">DA<span>)</span>USE</div>
       <div class="home-subtitle">Cycle de facturation & recouvrement partenaires</div>
     </div>
-    <div style="font-size:11px;color:var(--dy-gray);">Cliquez sur un email pour voir son contenu →</div>
+    <div style="font-size:11px;color:var(--dy-gray);">15 templates · 5 phases · Juin 2026</div>
   </div>
 
   <div class="home-body">
@@ -341,7 +344,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
       </div>
     </div>
 
-    <div class="h-connector">↓ Toujours aucun paiement à J+30</div>
+    <div class="h-connector">↓ ≥ 4 factures impayées</div>
 
     <!-- PHASE 3 -->
     <div class="h-phase" style="border-color:var(--p3);">
@@ -416,11 +419,20 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
 </div><!-- /page-home -->
 
 <div id="page-detail">
-<div style="background:#fff;border-bottom:1px solid var(--dy-border);padding:8px 20px;display:flex;align-items:center;gap:12px;"><span class="back-btn" onclick="goHome()">← Accueil</span><span style="font-size:12px;color:var(--dy-gray);" id="detail-label">Vue détaillée</span></div>
 
 <!-- ══ FRISE ══ -->
 <div id="frise">
   <div class="frise-inner">
+
+    <div class="frise-phase" onclick="goHome()" style="flex:0.55;min-width:82px;border-right:2px solid rgba(0,0,0,.08);">
+      <div class="fp-head" style="background:#1A1A1A;">
+        <div><div class="fp-num">MAP</div><div class="fp-title">Parcours</div></div>
+      </div>
+      <div class="fp-emails">
+        <span class="fp-tag" style="background:#F3F4F6;color:#374151;" onclick="e('page-home')">Accueil</span>
+        <span class="fp-tag" style="background:#EDE9FE;color:#5B21B6;" onclick="e('design-system')">Design Sys.</span>
+      </div>
+    </div>
 
     <div class="frise-phase" onclick="scrollTo('p1')">
       <div class="fp-head" style="background:var(--p1);">
@@ -487,6 +499,9 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
 
 <!-- ══ SIDEBAR ══ -->
 <aside>
+  <div class="sb-section">Navigation</div>
+  <a class="sb-item" href="#page-home"><span class="sb-dot" style="background:#374151"></span>Vue parcours</a>
+  <a class="sb-item" href="#design-system"><span class="sb-dot" style="background:#4338CA"></span>Design Système</a>
   <div class="sb-section">Phase 1 — Facturation</div>
   <a class="sb-item" href="#a1"><span class="sb-dot" style="background:var(--p1)"></span>A1 — Validation no-shows<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">EN</span></a>
   <a class="sb-item" href="#a2"><span class="sb-dot" style="background:var(--p1)"></span>A2 — Facture émise (FR+EN)<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">FR</span></a>
@@ -529,6 +544,182 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
 
 <!-- ══ MAIN ══ -->
 <main>
+
+<!-- ═══════════════════════ DESIGN SYSTÈME ═══════════════════════ -->
+<div class="phase-block" id="design-system">
+  <div class="phase-header" style="background:#1E1B4B;border-color:#4338CA;">
+    <div>
+      <h2 style="color:#fff;">Design Système — Email Templates</h2>
+      <p style="color:rgba(255,255,255,.7);">Composants, couleurs et conventions réutilisés dans l'ensemble des 15 templates partenaires</p>
+    </div>
+    <span class="phase-count" style="background:#4338CA;color:#fff;">7 sections</span>
+  </div>
+
+  <!-- 1. Palette de couleurs -->
+  <div style="margin-bottom:32px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9CA3AF;margin-bottom:14px;">Palette de couleurs</div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+      <div style="text-align:center;">
+        <div style="width:56px;height:40px;border-radius:8px;background:var(--p1);"></div>
+        <div style="font-size:10px;font-weight:700;color:var(--p1);margin-top:5px;">Phase 1</div>
+        <div style="font-size:9px;color:#9CA3AF;">#0EA5A0</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:56px;height:40px;border-radius:8px;background:var(--p2);"></div>
+        <div style="font-size:10px;font-weight:700;color:var(--p2);margin-top:5px;">Phase 2</div>
+        <div style="font-size:9px;color:#9CA3AF;">#F59E0B</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:56px;height:40px;border-radius:8px;background:var(--p3);"></div>
+        <div style="font-size:10px;font-weight:700;color:var(--p3);margin-top:5px;">Phase 3</div>
+        <div style="font-size:9px;color:#9CA3AF;">#EF4444</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:56px;height:40px;border-radius:8px;background:var(--p4);"></div>
+        <div style="font-size:10px;font-weight:700;color:var(--p4);margin-top:5px;">Phase 4</div>
+        <div style="font-size:9px;color:#9CA3AF;">#10B981</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:56px;height:40px;border-radius:8px;background:var(--p5);"></div>
+        <div style="font-size:10px;font-weight:700;color:var(--p5);margin-top:5px;">Phase 5</div>
+        <div style="font-size:9px;color:#9CA3AF;">#8B5CF6</div>
+      </div>
+      <div style="width:1px;background:#E5E7EB;height:50px;margin:0 4px;align-self:flex-end;"></div>
+      <div style="text-align:center;">
+        <div style="width:56px;height:40px;border-radius:8px;background:#F5A623;"></div>
+        <div style="font-size:10px;font-weight:600;color:#92400E;margin-top:5px;">Brand</div>
+        <div style="font-size:9px;color:#9CA3AF;">#F5A623</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:56px;height:40px;border-radius:8px;background:#3B82F6;"></div>
+        <div style="font-size:10px;font-weight:600;color:#1E40AF;margin-top:5px;">Info</div>
+        <div style="font-size:9px;color:#9CA3AF;">#3B82F6</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:56px;height:40px;border-radius:8px;background:#111;"></div>
+        <div style="font-size:10px;font-weight:600;color:#374151;margin-top:5px;">Black</div>
+        <div style="font-size:9px;color:#9CA3AF;">#111111</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Boutons CTA -->
+  <div style="margin-bottom:32px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9CA3AF;margin-bottom:14px;">Boutons CTA</div>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;">
+      <div style="text-align:center;"><span class="e-btn orange">CTA principal</span><div style="font-size:9px;color:#9CA3AF;margin-top:6px;">Primary · orange</div></div>
+      <div style="text-align:center;"><span class="e-btn red">Alerte critique</span><div style="font-size:9px;color:#9CA3AF;margin-top:6px;">Danger · red</div></div>
+      <div style="text-align:center;"><span class="e-btn green">Paiement reçu</span><div style="font-size:9px;color:#9CA3AF;margin-top:6px;">Success · green</div></div>
+      <div style="text-align:center;"><span class="e-btn teal">Voir ma facture</span><div style="font-size:9px;color:#9CA3AF;margin-top:6px;">Teal</div></div>
+      <div style="text-align:center;"><span class="e-btn ghost">Secondaire</span><div style="font-size:9px;color:#9CA3AF;margin-top:6px;">Ghost · border gray</div></div>
+      <div style="text-align:center;"><span class="e-btn ghost-red">Contester</span><div style="font-size:9px;color:#9CA3AF;margin-top:6px;">Ghost-red</div></div>
+    </div>
+  </div>
+
+  <!-- 3. Boîtes de contenu -->
+  <div style="margin-bottom:32px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9CA3AF;margin-bottom:14px;">Boîtes de contenu</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;">
+      <div><div class="e-box neutral"><div style="font-size:12px;font-weight:600;">neutral</div><div style="font-size:11.5px;color:#92400E;margin-top:3px;">Récapitulatif · montants · dates</div></div><div style="font-size:9px;color:#9CA3AF;margin-top:3px;">bg warm · border orange</div></div>
+      <div><div class="e-box info"><div style="font-size:12px;font-weight:600;color:#1E40AF;">info</div><div style="font-size:11.5px;color:#1E40AF;margin-top:3px;">Explications · règles · FAQ</div></div><div style="font-size:9px;color:#9CA3AF;margin-top:3px;">bg light-blue · border blue</div></div>
+      <div><div class="e-box warn"><div style="font-size:12px;font-weight:600;color:#92400E;">warn</div><div style="font-size:11.5px;color:#92400E;margin-top:3px;">Dates limites · actions requises</div></div><div style="font-size:9px;color:#9CA3AF;margin-top:3px;">bg warm · border amber</div></div>
+      <div><div class="e-box danger"><div style="font-size:12px;font-weight:600;color:#991B1B;">danger</div><div style="font-size:11.5px;color:#991B1B;margin-top:3px;">Suspension · mise en demeure</div></div><div style="font-size:9px;color:#9CA3AF;margin-top:3px;">bg light-red · border red</div></div>
+      <div><div class="e-box success"><div style="font-size:12px;font-weight:600;color:#065F46;">success</div><div style="font-size:11.5px;color:#065F46;margin-top:3px;">Paiement reçu · compte réactivé</div></div><div style="font-size:9px;color:#9CA3AF;margin-top:3px;">bg light-green · border green</div></div>
+      <div><div class="e-box gray"><div style="font-size:12px;font-weight:600;color:#374151;">gray</div><div style="font-size:11.5px;color:#374151;margin-top:3px;">Contenu neutre · données secondaires</div></div><div style="font-size:9px;color:#9CA3AF;margin-top:3px;">bg near-white · border gray</div></div>
+    </div>
+  </div>
+
+  <!-- 4. Badges & étiquettes -->
+  <div style="margin-bottom:32px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9CA3AF;margin-bottom:14px;">Badges & étiquettes</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+      <span class="pill pill-auto">Automatique</span>
+      <span class="pill pill-manual">Manuel</span>
+      <span class="pill pill-new">Nouveau</span>
+      <span class="pill pill-refonte">Refonte</span>
+      <span class="pill pill-bug">Bug</span>
+      <span class="pill pill-gray">Neutre</span>
+      <div style="width:1px;background:#E5E7EB;height:22px;margin:0 2px;"></div>
+      <span class="lang-badge lang-fr">FR</span>
+      <span class="lang-badge lang-en">EN</span>
+      <div style="width:1px;background:#E5E7EB;height:22px;margin:0 2px;"></div>
+      <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);">Phase 1</span>
+      <span class="fp-tag" style="background:var(--p2-light);color:var(--p2);">Phase 2</span>
+      <span class="fp-tag" style="background:var(--p3-light);color:var(--p3);">Phase 3</span>
+      <span class="fp-tag" style="background:var(--p4-light);color:var(--p4);">Phase 4</span>
+      <span class="fp-tag" style="background:var(--p5-light);color:var(--p5);">Phase 5</span>
+    </div>
+  </div>
+
+  <!-- 5. Indicateurs d'urgence -->
+  <div style="margin-bottom:32px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9CA3AF;margin-bottom:14px;">Indicateurs d'urgence (1 → 5)</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:14px;"><div class="urgency-row" style="color:var(--p1);"><div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div><div class="u-dot"></div></div><div style="font-size:12px;color:#6B7280;">Niveau 1 — Informatif (A1, A2, A12…)</div></div>
+      <div style="display:flex;align-items:center;gap:14px;"><div class="urgency-row" style="color:var(--p2);"><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot"></div><div class="u-dot"></div></div><div style="font-size:12px;color:#6B7280;">Niveau 3 — Relance impayée (C1, C2, A3…)</div></div>
+      <div style="display:flex;align-items:center;gap:14px;"><div class="urgency-row" style="color:var(--p3);"><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div><div class="u-dot on"></div></div><div style="font-size:12px;color:#6B7280;">Niveau 5 — Critique (A7, A16, C3…)</div></div>
+    </div>
+  </div>
+
+  <!-- 6. Variables dynamiques -->
+  <div style="margin-bottom:32px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9CA3AF;margin-bottom:14px;">Variables dynamiques</div>
+    <div class="vars-bar">
+      <span class="vars-label">Exemples</span>
+      <var>{{nom_hotel}}</var>
+      <var>{{montant_du}}</var>
+      <var>{{date_echeance}}</var>
+      <var>{{num_facture}}</var>
+      <var>{{periode}}</var>
+      <var>{{hotel_name}}</var>
+      <var>{{amount}}</var>
+      <var>{{due_date}}</var>
+    </div>
+    <div style="font-size:12px;color:#6B7280;margin-top:8px;line-height:1.6;">Injectées via NetSuite/Salesforce. Apparaissent en <span style="background:#FEF3C7;color:#92400E;padding:0 5px;border-radius:4px;font-weight:700;font-size:11px;">jaune</span> dans tous les templates pour identification rapide en revue.</div>
+  </div>
+
+  <!-- 7. Structure type d'un email -->
+  <div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9CA3AF;margin-bottom:14px;">Structure type d'un email</div>
+    <div style="display:grid;grid-template-columns:minmax(280px,380px) 1fr;gap:20px;align-items:start;">
+      <div class="email-shell">
+        <div class="subject-bar"><span>Objet :</span><span class="subject-val">Titre email — <var>{{nom_hotel}}</var></span></div>
+        <div class="email-body">
+          <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
+          <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
+          <div class="e-body">
+            <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+            <div class="e-p" style="font-size:12.5px;">[Corps — informations, données financières, contexte]</div>
+            <div class="e-box neutral" style="font-size:12px;"><div class="e-row"><span class="e-lbl">Montant dû</span><span class="e-val"><var>{{montant_du}}</var></span></div><div class="e-row"><span class="e-lbl">Échéance</span><span class="e-val"><var>{{date_echeance}}</var></span></div></div>
+            <div class="e-btn-wrap"><span class="e-btn orange">CTA Principal</span><span class="e-btn ghost">Secondaire</span></div>
+            <div class="e-warn-strip"><div class="e-warn-icon">⚠️</div><div>Bandeau d'alerte contextuel (warn ou red)</div></div>
+            <div class="e-sign"><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a></div></div>
+          </div>
+          <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S.</div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:12.5px;color:#374151;">
+        <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:32px;height:5px;background:linear-gradient(90deg,#F5A623,#F0C060);border-radius:2px;flex-shrink:0;margin-top:6px;"></div><div><strong>Bande de couleur</strong> — identifie la phase (teal P1, orange P2, rouge P3, vert P4/P5)</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:16px;height:16px;background:#111;border-radius:3px;flex-shrink:0;margin-top:2px;"></div><div><strong>Logo bar</strong> — DA)USE + tagline "Room to Daydream"</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:16px;height:16px;background:#FEF3C7;border:1px solid #FDE68A;border-radius:3px;flex-shrink:0;margin-top:2px;"></div><div><strong>Variables</strong> — surlignées en jaune · injection dynamique NetSuite</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:16px;height:16px;background:#F5A623;border-radius:3px;flex-shrink:0;margin-top:2px;"></div><div><strong>CTA orange</strong> — action principale (portail, paiement, mise à jour)</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:16px;height:16px;background:transparent;border:1.5px solid #CCC;border-radius:3px;flex-shrink:0;margin-top:2px;"></div><div><strong>CTA ghost</strong> — action secondaire (contester, aide, annuler)</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:16px;height:16px;background:#FFFBEB;border-left:3px solid #F59E0B;flex-shrink:0;margin-top:2px;"></div><div><strong>Bandeau warn</strong> — alerte modérée (délai, relance) · version rouge pour critique</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:16px;height:16px;background:#F9F9F9;border-top:1px solid #EEE;flex-shrink:0;margin-top:2px;"></div><div><strong>Footer</strong> — liens FAQ, mentions légales, coordonnées</div></div>
+      </div>
+    </div>
+    <!-- Bandeaux d'alerte -->
+    <div style="margin-top:20px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9CA3AF;margin-bottom:10px;">Bandeaux d'alerte</div>
+      <div style="display:flex;flex-direction:column;gap:8px;max-width:520px;">
+        <div class="e-warn-strip"><div class="e-warn-icon">⚠️</div><div>Avertissement standard — délai, action requise, ton modéré</div></div>
+        <div class="e-warn-strip red"><div class="e-warn-icon">🚨</div><div>Alerte critique — suspension imminente ou procédure légale engagée</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /design-system -->
+
 
 <!-- ═══════════════════════ PHASE 1 ═══════════════════════ -->
 <div class="phase-block" id="p1">
@@ -2102,25 +2293,23 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
 </div>
 
 <script>
-
+/* Single-page navigation — no page switching */
 function goTo(id){
-  document.getElementById('page-home').style.display='none';
-  document.getElementById('page-detail').style.display='block';
-  const lbl=document.getElementById('detail-label');
-  if(lbl){lbl.textContent='Email '+id.toUpperCase();}
-  setTimeout(()=>{
-    const el=document.getElementById(id);
-    if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
-  },80);
+  const el=document.getElementById(id);
+  if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
 }
 function goHome(){
-  document.getElementById('page-detail').style.display='none';
-  document.getElementById('page-home').style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function scrollTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
 function e(id){event.stopPropagation();document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
 
+/* Move frise to sit directly under the sticky home-header */
+document.addEventListener('DOMContentLoaded',()=>{
+  const frise=document.getElementById('frise');
+  const header=document.querySelector('.home-header');
+  if(frise&&header){header.after(frise);}
+});
 
 const sections=[...document.querySelectorAll('.email-card,.phase-block')];
 const links=[...document.querySelectorAll('.sb-item')];
@@ -2128,12 +2317,12 @@ const obs=new IntersectionObserver(entries=>{
   entries.forEach(en=>{
     if(en.isIntersecting){
       const id=en.target.id;
-      links.forEach(l=>l.classList.remove('active'));
+      links.forEach(l=>{l.classList.remove('active');l.style.background='';});
       const a=document.querySelector(`.sb-item[href="#${id}"]`);
       if(a){a.classList.add('active');a.style.background='rgba(255,255,255,.1)';}
     }
   });
-},{threshold:.25,rootMargin:'-60px 0px 0px 0px'});
+},{threshold:.2,rootMargin:`-${parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-total')||'146')}px 0px 0px 0px`});
 sections.forEach(s=>obs.observe(s));
 </script>
 </div><!-- /page-detail -->
