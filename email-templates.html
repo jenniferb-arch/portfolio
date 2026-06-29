@@ -240,16 +240,86 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
 .h-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
 .h-leg{display:flex;align-items:center;gap:5px;font-size:11px;color:#555;}
 .h-leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+
+/* ═══ ENHANCED HEADER ═══ */
+:root{--header-h:80px;--nav-total:80px;}
+.home-header{flex-direction:column;padding:0;align-items:stretch;gap:0;}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;padding:10px 32px 8px;}
+.hdr-nav{display:flex;align-items:center;padding:0 20px;border-top:1px solid var(--dy-border);}
+.hdr-tab{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--dy-gray);cursor:pointer;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;text-decoration:none;}
+.hdr-tab:hover{color:var(--dy-black);}
+.hdr-tab.active{color:var(--dy-black);border-bottom-color:var(--dy-orange);}
+.hdr-phase-pill{font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:99px;background:#F3F4F6;color:#374151;transition:background .3s,color .3s;border:1.5px solid #E5E7EB;white-space:nowrap;}
+
+/* ═══ SIDEBAR PHASE HEADERS ═══ */
+.sb-ph{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:7px;padding:7px 14px;background:#141414;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-ph-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sb-ph-name{font-size:9px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:rgba(255,255,255,.5);}
+.sb-ph-count{margin-left:auto;font-size:9px;font-weight:600;color:rgba(255,255,255,.28);background:rgba(255,255,255,.07);padding:1px 5px;border-radius:3px;}
+.sb-dot-ok{background:#10B981;}
+.sb-dot-refonte{background:#F59E0B;}
+.sb-dot-bug{background:#EF4444;}
+.sb-dot-new{background:#8B5CF6;}
+
+/* ═══ CARD COLLAPSE ═══ */
+.card-expand-toggle{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:5px 13px;border-radius:6px;border:1px solid var(--dy-border);background:#fff;cursor:pointer;color:#374151;transition:background .12s;margin-top:10px;}
+.card-expand-toggle:hover{background:#F9FAFB;}
+.card-expand-toggle .tog-arrow{font-size:9px;display:inline-block;transition:transform .18s;}
+.card-expand-toggle.open .tog-arrow{transform:rotate(180deg);}
+.card-body-collapsible.collapsed{display:none;}
+.phase-bulk-controls{display:flex;gap:7px;margin-bottom:14px;justify-content:flex-end;}
+.phase-bulk-btn{font-size:10.5px;font-weight:600;padding:4px 11px;border-radius:5px;border:1px solid var(--dy-border);background:#fff;cursor:pointer;color:#6B7280;transition:background .12s;}
+.phase-bulk-btn:hover{background:#F9FAFB;color:#111;}
+
+/* ═══ FR / EN TOGGLE ═══ */
+.card-lang-bar{display:flex;gap:2px;background:#F3F4F6;padding:2px 3px;border-radius:7px;margin-left:auto;align-self:flex-start;flex-shrink:0;}
+.lang-btn{font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;border:none;cursor:pointer;color:#6B7280;background:transparent;transition:background .12s,color .12s;letter-spacing:.04em;}
+.lang-btn.active{background:#fff;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.14);}
+body.lang-en [data-lp="fr"]{display:none!important;}
+body:not(.lang-en) [data-lp="en"]{display:none!important;}
+body.lang-en .email-card[data-has-companion]{display:none!important;}
+body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
+
+/* ═══ JOURNEY STATUS BADGES ═══ */
+.he-footer{display:flex;align-items:center;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.he-status{font-size:8.5px;font-weight:700;padding:1px 6px;border-radius:3px;display:inline-block;}
+.he-status-new{background:#EDE9FE;color:#5B21B6;}
+.he-status-refonte{background:#DBEAFE;color:#1E40AF;}
+.he-status-bug{background:#FEE2E2;color:#991B1B;}
+.he-status-ok{background:#D1FAE5;color:#065F46;}
+.he-type-icon{font-size:10px;opacity:.65;}
+
+/* ═══ MOBILE DESIGN SYSTEME DRAWER ═══ */
+.mob-ds-fab{display:none;}
+@media(max-width:768px){
+  .layout{flex-direction:column;}
+  aside{width:100%;min-width:unset;height:auto;position:relative;top:auto;}
+  main{max-width:100%;}
+  .mob-ds-fab{display:flex;align-items:center;gap:6px;position:fixed;bottom:20px;right:18px;z-index:500;background:#4338CA;color:#fff;border:none;border-radius:99px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);}
+  .mob-ds-drawer{position:fixed;right:-110%;top:0;bottom:0;z-index:600;width:88%;max-width:360px;background:#fff;box-shadow:-6px 0 30px rgba(0,0,0,.15);transition:right .25s ease;overflow-y:auto;padding:24px 20px;}
+  .mob-ds-drawer.open{right:0;}
+  .mob-ds-overlay{display:none;position:fixed;inset:0;z-index:590;background:rgba(0,0,0,.4);}
+  .mob-ds-overlay.open{display:block;}
+}
 </style>
 </head>
 <body>
 
 <div class="home-header">
-  <div>
-    <div class="home-brand">DA<span>)</span>USE</div>
-    <div class="home-subtitle">Cycle de facturation & recouvrement partenaires</div>
+  <div class="hdr-top">
+    <div>
+      <div class="home-brand">DA<span>)</span>USE</div>
+      <div class="home-subtitle">Cycle de facturation &amp; recouvrement partenaires</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span id="phase-pill" class="hdr-phase-pill">Vue d'ensemble</span>
+      <div style="font-size:11px;color:var(--dy-gray);">15 templates · 5 phases · Juin 2026</div>
+    </div>
   </div>
-  <div style="font-size:11px;color:var(--dy-gray);">15 templates · 5 phases · Juin 2026</div>
+  <nav class="hdr-nav">
+    <a class="hdr-tab active" href="#overview" onclick="setActiveTab(this)">📊 Vue parcours</a>
+    <a class="hdr-tab" href="#design-system" onclick="setActiveTab(this)">🎨 Design Système</a>
+  </nav>
 </div>
 
 <div class="layout">
@@ -257,46 +327,74 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
 <!-- ══ SIDEBAR ══ -->
 <aside>
   <div class="sb-section">Navigation</div>
-  <a class="sb-item" href="#overview"><span class="sb-dot" style="background:#374151"></span>Vue parcours</a>
-  <a class="sb-item" href="#design-system"><span class="sb-dot" style="background:#4338CA"></span>Design Système</a>
+  <a class="sb-item" href="#overview" onclick="setActiveTab(document.querySelector('.hdr-tab'))"><span class="sb-dot" style="background:#374151"></span>Vue parcours</a>
+  <a class="sb-item" href="#design-system" onclick="setActiveTab(document.querySelectorAll('.hdr-tab')[1])"><span class="sb-dot" style="background:#4338CA"></span>Design Système</a>
 
-  <div class="sb-section">Phase 1 — Facturation</div>
-  <a class="sb-item" href="#a1"><span class="sb-dot" style="background:var(--p1)"></span>A1 — Validation no-shows<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">EN</span></a>
-  <a class="sb-item" href="#a2"><span class="sb-dot" style="background:var(--p1)"></span>A2 — Facture émise (FR+EN)<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">FR</span></a>
-  <a class="sb-item" href="#a11"><span class="sb-dot" style="background:var(--p1)"></span>A11 — Rappel échéance J-7<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">NEW</span></a>
-  <a class="sb-item" href="#a12"><span class="sb-dot" style="background:var(--p1)"></span>A12 — Direct Debit<span class="sb-ref" style="background:#FEE2E2;color:#991B1B">BUG</span></a>
-  <a class="sb-item" href="#a10"><span class="sb-dot" style="background:var(--p1)"></span>A10 — Récap Accor<span class="sb-ref" style="background:#EDE9FE;color:#5B21B6">NEW</span></a>
-  <a class="sb-item" href="#a5"><span class="sb-dot" style="background:var(--p1)"></span>A5 — Note de crédit</a>
-  <a class="sb-item" href="#a4"><span class="sb-dot" style="background:var(--p1)"></span>A4 — Échec prélèvement</a>
+  <!-- Phase 1 -->
+  <div class="sb-ph">
+    <span class="sb-ph-dot" style="background:var(--p1)"></span>
+    <span class="sb-ph-name">Phase 1 — Facturation</span>
+    <span class="sb-ph-count">7</span>
+  </div>
+  <a class="sb-item" href="#a1"><span class="sb-dot sb-dot-refonte"></span>A1 — Validation orders</a>
+  <a class="sb-item" href="#a2"><span class="sb-dot sb-dot-refonte"></span>A2 — Facture émise</a>
+  <a class="sb-item" href="#a11"><span class="sb-dot sb-dot-new"></span>A11 — Rappel J-7</a>
+  <a class="sb-item" href="#a12"><span class="sb-dot sb-dot-bug"></span>A12 — Direct Debit</a>
+  <a class="sb-item" href="#a10"><span class="sb-dot sb-dot-new"></span>A10 — Récap Accor</a>
+  <a class="sb-item" href="#a5"><span class="sb-dot sb-dot-refonte"></span>A5 — Note de crédit</a>
+  <a class="sb-item" href="#a4"><span class="sb-dot sb-dot-refonte"></span>A4 — Échec prélèvement</a>
 
-  <div class="sb-section">Phase 2 — Relances</div>
-  <a class="sb-item" href="#a3p2"><span class="sb-dot" style="background:var(--p2)"></span>A3 — Relance manuelle</a>
-  <a class="sb-item" href="#c1"><span class="sb-dot" style="background:var(--p2)"></span>C1 — Relance auto J+1</a>
-  <a class="sb-item" href="#c2"><span class="sb-dot" style="background:var(--p2)"></span>C2 — Relance auto J+15</a>
-  <a class="sb-item" href="#c3"><span class="sb-dot" style="background:var(--p2)"></span>C3 — Relance auto J+30</a>
+  <!-- Phase 2 -->
+  <div class="sb-ph">
+    <span class="sb-ph-dot" style="background:var(--p2)"></span>
+    <span class="sb-ph-name">Phase 2 — Relances</span>
+    <span class="sb-ph-count">4</span>
+  </div>
+  <a class="sb-item" href="#a3p2"><span class="sb-dot sb-dot-refonte"></span>A3 — Relance manuelle</a>
+  <a class="sb-item" href="#c1"><span class="sb-dot sb-dot-refonte"></span>C1 — Relance auto J+1</a>
+  <a class="sb-item" href="#c2"><span class="sb-dot sb-dot-refonte"></span>C2 — Relance auto J+15</a>
+  <a class="sb-item" href="#c3"><span class="sb-dot sb-dot-refonte"></span>C3 — Relance auto J+30</a>
 
-  <div class="sb-section">Phase 3 — Warning</div>
-  <a class="sb-item" href="#a6"><span class="sb-dot" style="background:var(--p3)"></span>A6 — Warning bad payer</a>
-  <a class="sb-item" href="#a6en"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A6 EN</a>
-  <a class="sb-item" href="#a9b"><span class="sb-dot" style="background:var(--p3)"></span>A9B — J-7 avant suspension</a>
-  <a class="sb-item" href="#a9ben"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A9B EN</a>
-  <a class="sb-item" href="#a7"><span class="sb-dot" style="background:var(--p3)"></span>A7 — Désactivation</a>
-  <a class="sb-item" href="#a7en"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A7 EN</a>
-  <a class="sb-item" href="#a16"><span class="sb-dot" style="background:var(--p3)"></span>A16 — Mise en demeure</a>
-  <a class="sb-item" href="#a16en"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A16 EN</a>
+  <!-- Phase 3 -->
+  <div class="sb-ph">
+    <span class="sb-ph-dot" style="background:var(--p3)"></span>
+    <span class="sb-ph-name">Phase 3 — Warning</span>
+    <span class="sb-ph-count">4</span>
+  </div>
+  <a class="sb-item" href="#a6"><span class="sb-dot sb-dot-refonte"></span>A6 — Warning bad payer</a>
+  <a class="sb-item" href="#a9b"><span class="sb-dot sb-dot-new"></span>A9B — J-7 avant suspension</a>
+  <a class="sb-item" href="#a7"><span class="sb-dot sb-dot-new"></span>A7 — Désactivation</a>
+  <a class="sb-item" href="#a16"><span class="sb-dot sb-dot-new"></span>A16 — Mise en demeure</a>
 
-  <div class="sb-section">Phase 4 & 5</div>
-  <a class="sb-item" href="#d1"><span class="sb-dot" style="background:var(--p4)"></span>D1 — Paiement reçu</a>
-  <a class="sb-item" href="#d1en"><span class="sb-dot" style="background:var(--p4);opacity:.5"></span>D1 EN</a>
-  <a class="sb-item" href="#a8"><span class="sb-dot" style="background:var(--p4)"></span>A8 — Réactivation</a>
-  <a class="sb-item" href="#a8en"><span class="sb-dot" style="background:var(--p4);opacity:.5"></span>A8 EN</a>
-  <a class="sb-item" href="#a15"><span class="sb-dot" style="background:var(--p4)"></span>A15 — Réactivation + DD auto</a>
-  <a class="sb-item" href="#a15en"><span class="sb-dot" style="background:var(--p4);opacity:.5"></span>A15 EN</a>
+  <!-- Phase 4 -->
+  <div class="sb-ph">
+    <span class="sb-ph-dot" style="background:var(--p4)"></span>
+    <span class="sb-ph-name">Phase 4 — Résolution</span>
+    <span class="sb-ph-count">1</span>
+  </div>
+  <a class="sb-item" href="#d1"><span class="sb-dot sb-dot-new"></span>D1 — Paiement reçu</a>
+
+  <!-- Phase 5 -->
+  <div class="sb-ph">
+    <span class="sb-ph-dot" style="background:var(--p5)"></span>
+    <span class="sb-ph-name">Phase 5 — Réactivation</span>
+    <span class="sb-ph-count">2</span>
+  </div>
+  <a class="sb-item" href="#a8"><span class="sb-dot sb-dot-new"></span>A8 — Réactivation</a>
+  <a class="sb-item" href="#a15"><span class="sb-dot sb-dot-new"></span>A15 — Réactivation + DD</a>
 
   <div style="flex:1;"></div>
-  <div style="padding:14px;font-size:10px;color:rgba(255,255,255,.2);border-top:1px solid rgba(255,255,255,.07);line-height:1.7;">
-    15 templates · Juin 2026<br>
-    <span style="color:rgba(255,255,255,.35);">Variables en <span style="background:#FEF3C7;color:#92400E;padding:0 4px;border-radius:3px;">jaune</span></span>
+  <div style="padding:12px 14px 14px;border-top:1px solid rgba(255,255,255,.07);">
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+      <span style="display:flex;align-items:center;gap:3px;font-size:9.5px;color:rgba(255,255,255,.35);"><span class="sb-dot sb-dot-refonte" style="width:7px;height:7px;"></span>Refonte</span>
+      <span style="display:flex;align-items:center;gap:3px;font-size:9.5px;color:rgba(255,255,255,.35);"><span class="sb-dot sb-dot-bug" style="width:7px;height:7px;"></span>Bug</span>
+      <span style="display:flex;align-items:center;gap:3px;font-size:9.5px;color:rgba(255,255,255,.35);"><span class="sb-dot sb-dot-new" style="width:7px;height:7px;"></span>NEW</span>
+      <span style="display:flex;align-items:center;gap:3px;font-size:9.5px;color:rgba(255,255,255,.35);"><span class="sb-dot sb-dot-ok" style="width:7px;height:7px;"></span>OK</span>
+    </div>
+    <div style="font-size:10px;color:rgba(255,255,255,.2);line-height:1.7;">
+      15 templates · Juin 2026<br>
+      <span style="color:rgba(255,255,255,.35);">Variables en <span style="background:#FEF3C7;color:#92400E;padding:0 4px;border-radius:3px;">jaune</span></span>
+    </div>
   </div>
 </aside>
 
@@ -616,7 +714,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
           <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
           <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
           <div class="e-body">
-            <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+            <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
             <div class="e-p" style="font-size:12.5px;">[Corps — informations, données financières, contexte]</div>
             <div class="e-box neutral" style="font-size:12px;"><div class="e-row"><span class="e-lbl">Montant dû</span><span class="e-val"><var>{{montant_du}}</var></span></div><div class="e-row"><span class="e-lbl">Échéance</span><span class="e-val"><var>{{date_echeance}}</var></span></div></div>
             <div class="e-btn-wrap"><span class="e-btn orange">CTA Principal</span><span class="e-btn ghost">Secondaire</span></div>
@@ -664,8 +762,8 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
     <div class="card-meta">
       <div class="card-ref-wrap"><div class="card-ref p1-color">A1</div></div>
       <div class="card-info">
-        <div class="card-title">Validation réservations & déclaration no-shows <span class="lang-badge lang-en">EN</span></div>
-        <div class="card-desc">Envoyé le 1er du mois. Le partenaire valide la liste des réservations facturables et déclare ses no-shows avant la date limite. C'est le point de départ du cycle de facturation.</div>
+        <div class="card-title">Validation orders & déclaration no-shows <span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Envoyé le 1er du mois. Le partenaire valide la liste des orders facturables et déclare ses no-shows avant la date limite. C'est le point de départ du cycle de facturation.</div>
         <div class="card-pills">
           <span class="pill pill-gray">Déclencheur : Cron 1er du mois</span>
           <span class="pill pill-auto">100% Automatique</span>
@@ -677,23 +775,23 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
       </div>
     </div>
     <div class="email-shell">
-      <div class="subject-bar"><span>Objet :</span><span class="subject-val">[Action required before <var>{{deadline_date}}</var>] Validate your bookings for <var>{{month}}</var> — <var>{{hotel_name}}</var></span></div>
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">[Action required before <var>{{deadline_date}}</var>] Validate your orders for <var>{{month}}</var> — <var>{{hotel_name}}</var></span></div>
       <div class="email-body">
         <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
-          <div class="e-p">The list of your bookings for <var>{{month}}</var> is now available in the <strong>Invoiceable Booking</strong> section of your portal.</div>
-          <div class="e-btn-wrap"><span class="e-btn orange">Review my bookings</span></div>
-          <div class="e-p">Please check the booking list and make sure it is accurate. Declare any no-shows before the deadline below.</div>
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-p">The list of your orders for <var>{{month}}</var> is now available in the <strong>Invoiceable Orders</strong> section of your portal.</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Review my orders</span></div>
+          <div class="e-p">Please check the order list and make sure it is accurate. Declare any no-shows before the deadline below.</div>
           <div class="e-box warn">
             <div class="e-row"><span class="e-lbl">No-show declaration deadline</span><span class="e-val" style="color:#F59E0B;font-size:14px;"><var>{{deadline_date}}</var></span></div>
             <div class="e-row"><span class="e-lbl">Invoice generation date</span><span class="e-val"><var>{{invoice_date}}</var></span></div>
           </div>
           <div class="e-box info">
-            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:14px;flex-shrink:0;">ℹ️</span><div style="font-size:12.5px;color:#1E40AF;line-height:1.55;">After <var>{{deadline_date}}</var>, all bookings are considered confirmed and the commission is due. <strong>No changes can be made after this date.</strong></div></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:14px;flex-shrink:0;">ℹ️</span><div style="font-size:12.5px;color:#1E40AF;line-height:1.55;">After <var>{{deadline_date}}</var>, all orders are considered confirmed and the commission is due. <strong>No changes can be made after this date.</strong></div></div>
           </div>
-          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your booking validation, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+          <div class="e-sign"><div class="e-sign-pre">For any questions regarding your order validation, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
         <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
       </div>
@@ -702,23 +800,23 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
     <div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">Version française (FR)</div>
     <div class="email-shell">
-      <div class="subject-bar"><span>Objet :</span><span class="subject-val">[Action requise avant le <var>{{date_limite}}</var>] Validez vos réservations pour <var>{{mois}}</var> — <var>{{nom_hotel}}</var></span></div>
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">[Action requise avant le <var>{{date_limite}}</var>] Validez vos orders pour <var>{{mois}}</var> — <var>{{nom_hotel}}</var></span></div>
       <div class="email-body">
         <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
-          <div class="e-p">La liste de vos réservations pour <var>{{mois}}</var> est désormais disponible dans la section <strong>Réservations facturables</strong> de votre portail.</div>
-          <div class="e-btn-wrap"><span class="e-btn orange">Consulter mes réservations</span></div>
-          <div class="e-p">Vérifiez la liste des réservations et assurez-vous qu'elle est exacte. Déclarez vos no-shows avant la date limite ci-dessous.</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">La liste de vos orders pour <var>{{mois}}</var> est désormais disponible dans la section <strong>Orders facturables</strong> de votre portail.</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Consulter mes orders</span></div>
+          <div class="e-p">Vérifiez la liste des orders et assurez-vous qu'elle est exacte. Déclarez vos no-shows avant la date limite ci-dessous.</div>
           <div class="e-box warn">
             <div class="e-row"><span class="e-lbl">Date limite de déclaration no-show</span><span class="e-val" style="color:#F59E0B;font-size:14px;"><var>{{date_limite}}</var></span></div>
             <div class="e-row"><span class="e-lbl">Date de génération de la facture</span><span class="e-val"><var>{{date_facture}}</var></span></div>
           </div>
           <div class="e-box info">
-            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:14px;flex-shrink:0;">ℹ️</span><div style="font-size:12.5px;color:#1E40AF;line-height:1.55;">Après le <var>{{date_limite}}</var>, toutes les réservations sont considérées comme confirmées et la commission est due. <strong>Aucune modification ne sera possible après cette date.</strong></div></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:14px;flex-shrink:0;">ℹ️</span><div style="font-size:12.5px;color:#1E40AF;line-height:1.55;">Après le <var>{{date_limite}}</var>, tous les orders sont considérés comme confirmés et la commission est due. <strong>Aucune modification ne sera possible après cette date.</strong></div></div>
           </div>
-          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à la validation de vos réservations, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à la validation de vos orders, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
         <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
       </div>
@@ -750,7 +848,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Veuillez trouver ci-joint votre justificatif de TVA pour la période <var>{{periode}}</var>. Merci de procéder au règlement avant la date d'échéance indiquée ci-dessous.</div>
           <div class="e-box neutral">
             <div class="e-row"><span class="e-lbl">Numéro de facture</span><span class="e-val"><var>{{num_facture}}</var></span></div>
@@ -763,6 +861,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
           <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Options de paiement</div>
           <div class="e-payment-opt"><div class="e-opt-icon">💳</div><div><div class="e-opt-title">Par carte bancaire</div><div class="e-opt-desc">Connectez-vous à votre portail · Section "Invoices" · Sélectionnez la facture · Cliquez sur "Pay"</div></div></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">🏦</div><div><div class="e-opt-title">Par virement bancaire</div><div class="e-opt-desc">Notre RIB est disponible en pièce jointe. Merci d'indiquer impérativement le numéro <var>{{num_facture}}</var> en référence du virement.</div></div></div>
+          <div class="e-dd-nudge" style="margin-top:14px;"><div style="font-size:16px;flex-shrink:0;">🔄</div><div style="flex:1;"><div style="font-size:12.5px;font-weight:700;color:#1E40AF;margin-bottom:3px;">Simplifiez vos paiements — activez le prélèvement automatique</div><div style="font-size:12px;color:#374151;line-height:1.5;">Votre établissement est éligible au Direct Debit (zones €, UK et USA). Vos factures Dayuse seront réglées automatiquement à échéance, sans action de votre part.</div></div><span class="e-dd-nudge-cta">Souscrire</span></div>
           <div class="e-box info" style="margin-top:16px;"><div class="e-row" style="border-bottom:none;padding-bottom:0;"><span style="font-size:12px;color:#1E40AF;">ℹ️ &nbsp;Passé la date d'échéance, des intérêts de retard et frais de recouvrement peuvent s'appliquer — voir détails sur votre facture.</span></div></div>
           <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à cette facture, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
@@ -790,6 +889,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
           <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Payment options</div>
           <div class="e-payment-opt"><div class="e-opt-icon">💳</div><div><div class="e-opt-title">By credit card</div><div class="e-opt-desc">Log in to your portal · "Invoices" section · Select the invoice · Click "Pay"</div></div></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">🏦</div><div><div class="e-opt-title">By bank transfer</div><div class="e-opt-desc">Our bank details are attached. Please indicate invoice number <var>{{invoice_number}}</var> as the payment reference.</div></div></div>
+          <div class="e-dd-nudge" style="margin-top:14px;"><div style="font-size:16px;flex-shrink:0;">🔄</div><div style="flex:1;"><div style="font-size:12.5px;font-weight:700;color:#1E40AF;margin-bottom:3px;">Simplify your payments — set up Direct Debit</div><div style="font-size:12px;color:#374151;line-height:1.5;">Your property is eligible for Direct Debit (€, UK and USA zones). Your Dayuse invoices will be settled automatically on the due date, with no action required from you.</div></div><span class="e-dd-nudge-cta">Subscribe</span></div>
           <div class="e-box info" style="margin-top:16px;"><div class="e-row" style="border-bottom:none;padding-bottom:0;"><span style="font-size:12px;color:#1E40AF;">ℹ️ &nbsp;After the due date, late penalty and interest fees may apply — details on your invoice.</span></div></div>
           <div class="e-sign"><div class="e-sign-pre">For any questions regarding this invoice, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
@@ -823,7 +923,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#F5A623);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Nous vous rappelons que la facture ci-dessous arrive à échéance dans <strong>7 jours</strong>. Pour éviter toute relance, nous vous invitons à procéder au règlement avant la date indiquée.</div>
           <div class="e-box" style="background:var(--p2-light);border-color:var(--p2);">
             <div class="e-row"><span class="e-lbl">Numéro de facture</span><span class="e-val"><var>{{num_facture}}</var></span></div>
@@ -897,7 +997,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Veuillez trouver ci-joint la facture suivante, qui fera l'objet d'un prélèvement automatique sur votre compte.</div>
           <div class="e-box neutral">
             <div class="e-row"><span class="e-lbl">Numéro de facture</span><span class="e-val"><var>{{num_facture}}</var></span></div>
@@ -947,10 +1047,10 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
     <div class="card-meta">
       <div class="card-ref-wrap"><div class="card-ref p1-color" style="position:relative;">A10<span class="new-ribbon">NEW</span></div></div>
       <div class="card-info">
-        <div class="card-title">Récapitulatif bi-mensuel Accor <span class="lang-badge lang-fr">FR</span><span class="lang-badge lang-en">EN</span></div>
-        <div class="card-desc">Envoyé deux fois par mois aux partenaires du groupe Accor. Synthèse des réservations et commissions dues sur la période. Template créé — n'existait pas dans le zip fourni.</div>
+        <div class="card-title">Récapitulatif bi-mensuel groupes (Accor / Hilton) <span class="lang-badge lang-fr">FR</span><span class="lang-badge lang-en">EN</span></div>
+        <div class="card-desc">Envoyé deux fois par mois aux partenaires des groupes Accor et Hilton. Mentionne le système de réservation utilisé : Fastcom pour Accor, TACS pour Hilton. Template créé — n'existait pas dans le zip fourni.</div>
         <div class="card-pills">
-          <span class="pill pill-gray">Déclencheur : Cron bi-mensuel · filtre segment = Accor</span>
+          <span class="pill pill-gray">Déclencheur : Cron bi-mensuel · filtre segment = Accor | Hilton</span>
           <span class="pill pill-auto">100% Automatique</span>
           <span class="pill pill-new">Contenu créé</span>
         </div>
@@ -960,23 +1060,24 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
       </div>
     </div>
     <div class="email-shell">
-      <div class="subject-bar"><span>Objet :</span><span class="subject-val">Récapitulatif Dayuse · Accor · Période du <var>{{date_debut}}</var> au <var>{{date_fin}}</var> — <var>{{nom_hotel}}</var></span></div>
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">Récapitulatif Dayuse · <var>{{groupe}}</var> · Période du <var>{{date_debut}}</var> au <var>{{date_fin}}</var> — <var>{{nom_hotel}}</var></span></div>
       <div class="email-body">
         <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
-          <div class="e-p">Veuillez trouver ci-dessous le récapitulatif des réservations Dayuse facturables pour la période du <var>{{date_debut}}</var> au <var>{{date_fin}}</var>.</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-p">Veuillez trouver ci-dessous le récapitulatif des réservations Dayuse facturables pour la période du <var>{{date_debut}}</var> au <var>{{date_fin}}</var>. Les réservations de cette période ont été transmises via <strong><var>{{systeme_resa}}</var></strong>.</div>
           <div class="e-box neutral">
             <div class="e-row"><span class="e-lbl">Établissement</span><span class="e-val"><var>{{nom_hotel}}</var></span></div>
-            <div class="e-row"><span class="e-lbl">Groupe</span><span class="e-val">Accor — <var>{{code_accor}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Groupe</span><span class="e-val"><var>{{groupe}}</var> — <var>{{code_groupe}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Système de réservation</span><span class="e-val"><var>{{systeme_resa}}</var></span></div>
             <div class="e-row"><span class="e-lbl">Période</span><span class="e-val"><var>{{date_debut}}</var> → <var>{{date_fin}}</var></span></div>
             <div class="e-row"><span class="e-lbl">Nombre de réservations</span><span class="e-val"><var>{{nb_reservations}}</var></span></div>
             <div class="e-row"><span class="e-lbl">Commission due</span><span class="e-val"><var>{{montant_commission}}</var></span></div>
             <div class="e-row"><span class="e-lbl">Justificatif TVA</span><span class="e-val" style="color:#10B981;">✓ Joint à cet email</span></div>
           </div>
           <div class="e-p" style="font-size:13px;color:#555;"><strong style="color:#111;">Pièces jointes</strong><br>Justificatif de TVA Dayuse · Récapitulatif des réservations (période <var>{{date_debut}}</var> → <var>{{date_fin}}</var>)</div>
-          <div class="e-btn-wrap"><span class="e-btn orange">Payer mes factures</span><span class="e-btn ghost">Consulter le détail</span></div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Consulter mes factures</span></div>
           <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à ce récapitulatif ou à la facturation de votre établissement, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
         <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
@@ -985,30 +1086,31 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
 <div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">English version (EN — international)</div>
     <div class="email-shell">
-      <div class="subject-bar"><span>Subject:</span><span class="subject-val">Dayuse Accor Summary · Period <var>{{start_date}}</var> to <var>{{end_date}}</var> — <var>{{hotel_name}}</var></span></div>
+      <div class="subject-bar"><span>Subject:</span><span class="subject-val">Dayuse <var>{{group}}</var> Summary · Period <var>{{start_date}}</var> to <var>{{end_date}}</var> — <var>{{hotel_name}}</var></span></div>
       <div class="email-body">
         <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
           <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
-          <div class="e-p">Please find below the summary of your Dayuse invoiceable bookings for the period <var>{{start_date}}</var> to <var>{{end_date}}</var>.</div>
+          <div class="e-p">Please find below the summary of your Dayuse invoiceable bookings for the period <var>{{start_date}}</var> to <var>{{end_date}}</var>. The bookings for this period were transmitted via <strong><var>{{booking_system}}</var></strong>.</div>
           <div class="e-box neutral">
             <div class="e-row"><span class="e-lbl">Property</span><span class="e-val"><var>{{hotel_name}}</var></span></div>
-            <div class="e-row"><span class="e-lbl">Group</span><span class="e-val">Accor — <var>{{accor_code}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Group</span><span class="e-val"><var>{{group}}</var> — <var>{{group_code}}</var></span></div>
+            <div class="e-row"><span class="e-lbl">Booking system</span><span class="e-val"><var>{{booking_system}}</var></span></div>
             <div class="e-row"><span class="e-lbl">Period</span><span class="e-val"><var>{{start_date}}</var> → <var>{{end_date}}</var></span></div>
             <div class="e-row"><span class="e-lbl">Number of bookings</span><span class="e-val"><var>{{nb_bookings}}</var></span></div>
             <div class="e-row"><span class="e-lbl">Commission due</span><span class="e-val"><var>{{commission_amount}}</var></span></div>
             <div class="e-row"><span class="e-lbl">VAT certificate</span><span class="e-val" style="color:#10B981;">✓ Attached to this email</span></div>
           </div>
           <div class="e-p" style="font-size:13px;color:#555;"><strong style="color:#111;">Attachments</strong><br>Dayuse VAT certificate · Booking summary (<var>{{start_date}}</var> → <var>{{end_date}}</var>)</div>
-          <div class="e-btn-wrap"><span class="e-btn orange">Pay my invoices</span><span class="e-btn ghost">View details</span></div>
+          <div class="e-btn-wrap"><span class="e-btn orange">View my invoices</span></div>
           <div class="e-sign"><div class="e-sign-pre">For any questions regarding this summary or your property billing, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
         <div class="e-footer"><div class="e-footer-h">Need help?</div><div class="e-footer-links"><a href="#">Check our FAQ</a></div><div class="e-legal">Email sent by Dayuse.com · DAY USE S.A.S., registered in France under no. 524 948 924</div></div>
       </div>
     </div>
     </div>
-    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{code_accor}}</var><var>{{date_debut}}</var><var>{{date_fin}}</var><var>{{nb_reservations}}</var><var>{{montant_commission}}</var></div>
+    <div class="vars-bar"><span class="vars-label">Variables</span><var>{{nom_hotel}}</var><var>{{groupe}}</var><var>{{code_groupe}}</var><var>{{systeme_resa}}</var><var>{{date_debut}}</var><var>{{date_fin}}</var><var>{{nb_reservations}}</var><var>{{montant_commission}}</var><span style="font-size:10px;color:#92400E;margin-left:6px;">· Accor → systeme_resa = Fastcom · Hilton → systeme_resa = TACS</span></div>
   </div>
 
   <!-- A5 — Note de crédit -->
@@ -1057,7 +1159,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#10B981,#34D399);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Un avoir a été émis sur votre compte. Veuillez trouver ci-dessous les détails et le document en pièce jointe.</div>
           <div class="e-box success">
             <div class="e-row"><span class="e-lbl">Référence du document</span><span class="e-val"><var>{{ref_document}}</var></span></div>
@@ -1099,7 +1201,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#EF8C38);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Nous avons rencontré un problème technique avec votre mandat de prélèvement automatique. Le prélèvement ci-dessous n'a pas pu être effectué.</div>
           <div class="e-box warn">
             <div class="e-row"><span class="e-lbl">Numéro de facture</span><span class="e-val"><var>{{num_facture}}</var></span></div>
@@ -1178,7 +1280,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#F5A623);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
           <div class="e-p">We would like to inform you that your account presents <strong><var>{{nb_invoices}}</var> unpaid invoice(s)</strong> for a total amount of <strong><var>{{amount}}</var></strong>.</div>
           <div class="e-box info">
             <div class="e-row"><span class="e-lbl">Outstanding amount</span><span class="e-val"><var>{{amount}}</var></span></div>
@@ -1186,10 +1288,9 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
           </div>
           <div class="e-p">We kindly ask you to settle this amount as soon as possible. Please find attached a copy of your account statement and the outstanding invoice(s).</div>
           <div class="e-btn-wrap"><span class="e-btn orange">Settle my invoices</span></div>
-          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
-            <span style="font-size:15px;flex-shrink:0;">🔄</span>
-            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Avoid future reminders — set up <strong style="color:#111;">Direct Debit</strong> for automatic payment at every due date.</span>
-            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Set up</span>
+          <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
+            <div class="e-opt-icon">🔄</div>
+            <div><div class="e-opt-title">Avoid future reminders</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Payment already made?</div><div class="e-opt-desc">Send us your proof of payment (invoice reference + transfer date) by return email — we will update your account immediately.</div></div></div>
@@ -1207,7 +1308,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#F59E0B,#F5A623);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Nous vous informons que votre compte présente <strong><var>{{nb_factures}}</var> facture(s) impayée(s)</strong> pour un montant total de <strong><var>{{montant}}</var></strong>.</div>
           <div class="e-box info">
             <div class="e-row"><span class="e-lbl">Montant en attente</span><span class="e-val"><var>{{montant}}</var></span></div>
@@ -1215,10 +1316,9 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
           </div>
           <div class="e-p">Nous vous remercions de régulariser cette situation dans les meilleurs délais. Vous trouverez en pièce jointe votre relevé de compte et les factures concernées.</div>
           <div class="e-btn-wrap"><span class="e-btn orange">Régler mes factures</span></div>
-          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
-            <span style="font-size:15px;flex-shrink:0;">🔄</span>
-            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Évitez les prochaines relances — activez le <strong style="color:#111;">Direct Debit</strong> pour un règlement automatique à chaque échéance.</span>
-            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Activer</span>
+          <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
+            <div class="e-opt-icon">🔄</div>
+            <div><div class="e-opt-title">Évitez les prochaines relances</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez-nous votre preuve de paiement (référence facture + date de virement) par retour d'email — nous mettrons à jour votre compte immédiatement.</div></div></div>
@@ -1255,7 +1355,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
           <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#D97706;margin-bottom:12px;">Relance <strong style="font-size:12px;">1</strong> / 3</div>
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Sauf erreur de notre part, nous n'avons pas encore reçu le règlement de <var>{{nb_factures}}</var> facture(s) pour un montant total de <strong><var>{{montant_du}}</var></strong>, dont l'échéance est désormais dépassée.</div>
           <div class="e-box info">
             <div class="e-row"><span class="e-lbl">Montant en attente</span><span class="e-val"><var>{{montant_du}}</var></span></div>
@@ -1263,10 +1363,9 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
             <div class="e-row"><span class="e-lbl">Échéance dépassée depuis</span><span class="e-val"><var>{{date_echeance}}</var></span></div>
           </div>
           <div class="e-btn-wrap"><span class="e-btn orange">Régler mes factures</span></div>
-          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
-            <span style="font-size:15px;flex-shrink:0;">🔄</span>
-            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Évitez les prochaines relances — activez le <strong style="color:#111;">Direct Debit</strong> pour un règlement automatique à chaque échéance.</span>
-            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Activer</span>
+          <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
+            <div class="e-opt-icon">🔄</div>
+            <div><div class="e-opt-title">Évitez les prochaines relances</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez-nous votre preuve de paiement (référence facture + date de virement) par retour d'email — nous mettrons à jour votre compte immédiatement.</div></div></div>
@@ -1285,7 +1384,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
           <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#D97706;margin-bottom:12px;">Reminder <strong style="font-size:12px;">1</strong> / 3</div>
-          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
           <div class="e-p">Unless this has already been settled, we have not yet received payment for <var>{{nb_invoices}}</var> invoice(s) totalling <strong><var>{{amount_due}}</var></strong>, which is now past due.</div>
           <div class="e-box info">
             <div class="e-row"><span class="e-lbl">Outstanding amount</span><span class="e-val"><var>{{amount_due}}</var></span></div>
@@ -1293,10 +1392,9 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
             <div class="e-row"><span class="e-lbl">Overdue since</span><span class="e-val"><var>{{due_date}}</var></span></div>
           </div>
           <div class="e-btn-wrap"><span class="e-btn orange">Settle my invoices</span></div>
-          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
-            <span style="font-size:15px;flex-shrink:0;">🔄</span>
-            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Avoid future reminders — set up <strong style="color:#111;">Direct Debit</strong> for automatic payment at every due date.</span>
-            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Set up</span>
+          <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
+            <div class="e-opt-icon">🔄</div>
+            <div><div class="e-opt-title">Avoid future reminders</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Payment already made?</div><div class="e-opt-desc">Send us your proof of payment (invoice reference + transfer date) by return email — we will update your account immediately.</div></div></div>
@@ -1334,7 +1432,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
           <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#D97706;margin-bottom:12px;">Relance <strong style="font-size:12px;">2</strong> / 3</div>
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Malgré notre relance du <var>{{date_relance_1}}</var>, nous n'avons pas encore reçu le règlement de <var>{{nb_factures}}</var> facture(s) pour un montant total de <strong><var>{{montant_du}}</var></strong>.</div>
           <div class="e-box warn">
             <div class="e-row"><span class="e-lbl">Montant en attente</span><span class="e-val"><var>{{montant_du}}</var></span></div>
@@ -1342,15 +1440,13 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
             <div class="e-row"><span class="e-lbl">1re relance envoyée le</span><span class="e-val"><var>{{date_relance_1}}</var></span></div>
           </div>
           <div class="e-btn-wrap"><span class="e-btn orange">Régulariser ma situation</span></div>
-          <div class="e-warn-strip red">
-            <span class="e-warn-icon">⚠️</span>
-            <div><strong>Information importante :</strong> en l'absence de règlement, des intérêts de retard (10 % par an) ainsi que des frais de recouvrement (60 € forfaitaires) pourront être appliqués conformément à nos conditions générales.</div>
+          <div class="e-box danger" style="margin-top:12px;">
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;"><span style="font-size:15px;flex-shrink:0;">⚠️</span><div style="font-size:12.5px;color:#991B1B;line-height:1.55;"><strong>Information importante :</strong> en l'absence de règlement, des intérêts de retard (10 % par an) ainsi que des frais de recouvrement (60 € forfaitaires) pourront être appliqués conformément à nos conditions générales.</div></div>
+            <div style="border-top:1px solid #FECACA;padding-top:10px;display:flex;gap:8px;align-items:flex-start;"><span style="font-size:15px;flex-shrink:0;">📉</span><div style="font-size:12.5px;color:#9A3412;line-height:1.55;"><strong>Impact sur votre visibilité :</strong> en raison de cet impayé, la visibilité de votre établissement sur la plateforme Dayuse sera progressivement réduite jusqu'à la régularisation de votre situation.</div></div>
           </div>
-          <div class="e-box" style="background:#FFF7ED;border-color:#FB923C;margin-top:12px;"><div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:15px;flex-shrink:0;">📉</span><div style="font-size:12.5px;color:#9A3412;line-height:1.55;"><strong>Impact sur votre visibilité :</strong> en raison de cet impayé, la visibilité de votre établissement sur la plateforme Dayuse sera progressivement réduite jusqu'à la régularisation de votre situation.</div></div></div>
-          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
-            <span style="font-size:15px;flex-shrink:0;">🔄</span>
-            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Évitez les prochaines relances — activez le <strong style="color:#111;">Direct Debit</strong> pour un règlement automatique à chaque échéance.</span>
-            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Activer</span>
+          <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
+            <div class="e-opt-icon">🔄</div>
+            <div><div class="e-opt-title">Évitez les prochaines relances</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez-nous votre preuve de paiement (référence facture + date de virement) par retour d'email — nous mettrons à jour votre compte immédiatement.</div></div></div>
@@ -1369,7 +1465,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
           <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#D97706;margin-bottom:12px;">Reminder <strong style="font-size:12px;">2</strong> / 3</div>
-          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
           <div class="e-p">Despite our reminder of <var>{{first_reminder_date}}</var>, we have not yet received payment for <var>{{nb_invoices}}</var> invoice(s) totalling <strong><var>{{amount_due}}</var></strong>.</div>
           <div class="e-box warn">
             <div class="e-row"><span class="e-lbl">Outstanding amount</span><span class="e-val"><var>{{amount_due}}</var></span></div>
@@ -1377,15 +1473,13 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
             <div class="e-row"><span class="e-lbl">First reminder sent</span><span class="e-val"><var>{{first_reminder_date}}</var></span></div>
           </div>
           <div class="e-btn-wrap"><span class="e-btn orange">Settle my account</span></div>
-          <div class="e-warn-strip red">
-            <span class="e-warn-icon">⚠️</span>
-            <div><strong>Important notice:</strong> if this invoice remains unpaid, late penalty interest (10% per annum) and a fixed collection fee (€60 per invoice) may be applied in accordance with our terms and conditions.</div>
+          <div class="e-box danger" style="margin-top:12px;">
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;"><span style="font-size:15px;flex-shrink:0;">⚠️</span><div style="font-size:12.5px;color:#991B1B;line-height:1.55;"><strong>Important notice:</strong> if this invoice remains unpaid, late penalty interest (10% per annum) and a fixed collection fee (€60 per invoice) may be applied in accordance with our terms and conditions.</div></div>
+            <div style="border-top:1px solid #FECACA;padding-top:10px;display:flex;gap:8px;align-items:flex-start;"><span style="font-size:15px;flex-shrink:0;">📉</span><div style="font-size:12.5px;color:#9A3412;line-height:1.55;"><strong>Visibility impact:</strong> due to this outstanding balance, your property's ranking on the Dayuse platform may be progressively reduced until payment is received.</div></div>
           </div>
-          <div class="e-box" style="background:#FFF7ED;border-color:#FB923C;margin-top:12px;"><div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:15px;flex-shrink:0;">📉</span><div style="font-size:12.5px;color:#9A3412;line-height:1.55;"><strong>Visibility impact:</strong> due to this outstanding balance, your property's ranking on the Dayuse platform may be progressively reduced until payment is received.</div></div></div>
-          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
-            <span style="font-size:15px;flex-shrink:0;">🔄</span>
-            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Avoid future reminders — set up <strong style="color:#111;">Direct Debit</strong> for automatic payment at every due date.</span>
-            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Set up</span>
+          <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
+            <div class="e-opt-icon">🔄</div>
+            <div><div class="e-opt-title">Avoid future reminders</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Payment already made?</div><div class="e-opt-desc">Send us your proof of payment (invoice reference + transfer date) by return email — we will update your account immediately.</div></div></div>
@@ -1423,7 +1517,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
           <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#EF4444;margin-bottom:12px;">Relance <strong style="font-size:12px;">3</strong> / 3</div>
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Malgré nos relances des dernières semaines, nous n'avons toujours pas reçu le règlement de <var>{{nb_factures}}</var> facture(s). <strong>Nous vous demandons de régulariser cette situation dans les 48 heures.</strong></div>
           <div class="e-box danger">
             <div class="e-row"><span class="e-lbl">Capital dû</span><span class="e-val"><var>{{montant_du}}</var></span></div>
@@ -1435,14 +1529,13 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
             </div>
           </div>
           <div class="e-btn-wrap"><span class="e-btn orange">Régler maintenant</span></div>
-          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
-            <span style="font-size:15px;flex-shrink:0;">🔄</span>
-            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Évitez les prochaines relances — activez le <strong style="color:#111;">Direct Debit</strong> pour un règlement automatique à chaque échéance.</span>
-            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Activer</span>
-          </div>
           <div class="e-warn-strip red">
             <span class="e-warn-icon">🚨</span>
             <div>Sans règlement avant le <strong><var>{{date_limite}}</var></strong>, des intérêts de retard (taux légal + 10 points) et une indemnité forfaitaire de recouvrement de <strong>60 €</strong> s'appliqueront de plein droit — et votre dossier sera transmis à notre équipe de recouvrement avancée.</div>
+          </div>
+          <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
+            <div class="e-opt-icon">🔄</div>
+            <div><div class="e-opt-title">Évitez les prochaines relances</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez-nous votre preuve de paiement (référence facture + date de virement) par retour d'email — nous mettrons à jour votre compte immédiatement.</div></div></div>
@@ -1461,7 +1554,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
           <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#EF4444;margin-bottom:12px;">Reminder <strong style="font-size:12px;">3</strong> / 3</div>
-          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
           <div class="e-p">Despite our previous reminders, we have still not received payment for <var>{{nb_invoices}}</var> invoice(s). <strong>We ask that you settle this matter within 48 hours.</strong></div>
           <div class="e-box danger">
             <div class="e-row"><span class="e-lbl">Principal outstanding</span><span class="e-val"><var>{{amount_due}}</var></span></div>
@@ -1470,14 +1563,13 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
             <div class="e-row e-total-row" style="border-color:#FECACA;"><span class="e-total-lbl">Total due</span><span class="e-total-val red"><var>{{total_due}}</var></span></div>
           </div>
           <div class="e-btn-wrap"><span class="e-btn orange">Settle now</span></div>
-          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
-            <span style="font-size:15px;flex-shrink:0;">🔄</span>
-            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Avoid future reminders — set up <strong style="color:#111;">Direct Debit</strong> for automatic payment at every due date.</span>
-            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Set up</span>
-          </div>
           <div class="e-warn-strip red">
             <span class="e-warn-icon">🚨</span>
             <div>If payment is not received by <strong><var>{{deadline}}</var></strong>, late interest (statutory rate + 10 points) and the fixed collection fee of <strong>€60</strong> will apply by right — and your file will be escalated to our advanced collections team.</div>
+          </div>
+          <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
+            <div class="e-opt-icon">🔄</div>
+            <div><div class="e-opt-title">Avoid future reminders</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Payment already made?</div><div class="e-opt-desc">Send us your proof of payment (invoice reference + transfer date) by return email — we will update your account immediately.</div></div></div>
@@ -1528,7 +1620,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#EF4444,#DC2626);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Malgré plusieurs relances, nous constatons que <strong><var>{{nb_factures}}</var> facture(s)</strong> restent impayées sur votre compte. Nous vous invitons à régulariser cette situation <strong>dans les 14 jours</strong> afin d'éviter toute interruption de service.</div>
           <div class="e-box danger">
             <div class="e-row"><span class="e-lbl">Capital dû</span><span class="e-val"><var>{{montant_du}}</var></span></div>
@@ -1577,7 +1669,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#DC2626,#B91C1C);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Il vous reste <strong>7 jours</strong> pour régulariser votre situation avant la suspension de votre compte.</div>
           <div class="e-box danger">
             <div class="e-row"><span class="e-lbl">Montant total dû</span><span class="e-total-val red"><var>{{montant_total}}</var></span></div>
@@ -1585,6 +1677,11 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
           </div>
           <div class="e-warn-strip red"><span class="e-warn-icon">🚨</span><div>Sans règlement avant cette date, <strong>votre établissement sera suspendu de dayuse.com</strong> et ne sera plus visible par les voyageurs.</div></div>
           <div class="e-btn-wrap"><span class="e-btn orange">Payer maintenant</span></div>
+          <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
+            <div class="e-opt-icon">🔄</div>
+            <div><div class="e-opt-title">Évitez les prochaines relances</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
+          </div>
+          <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Si vous avez déjà effectué votre paiement dans les dernières 48h, merci d'ignorer ce message — notre système met à jour les statuts sous 2 jours ouvrés.</div></div></div>
           <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à votre dossier, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe recouvrement Dayuse</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
@@ -1617,7 +1714,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#DC2626,#B91C1C);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
           <div class="e-p">You have <strong>7 days</strong> to settle your account before it is suspended.</div>
           <div class="e-box danger">
             <div class="e-row"><span class="e-lbl">Total amount due</span><span class="e-total-val red"><var>{{total_amount}}</var></span></div>
@@ -1625,6 +1722,11 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
           </div>
           <div class="e-warn-strip red"><span class="e-warn-icon">🚨</span><div>Without payment by this date, <strong>your property will be suspended from dayuse.com</strong> and will no longer be visible to travellers.</div></div>
           <div class="e-btn-wrap"><span class="e-btn orange">Pay now</span></div>
+          <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
+            <div class="e-opt-icon">🔄</div>
+            <div><div class="e-opt-title">Avoid future reminders</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
+          </div>
+          <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Already paid?</div><div class="e-opt-desc">If you have made your payment within the last 48 hours, please disregard this message — our system updates statuses within 2 business days.</div></div></div>
           <div class="e-sign"><div class="e-sign-pre">For any questions regarding your account, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Collections Team</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
@@ -1657,7 +1759,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:#B91C1C;"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">En raison du non-règlement de vos factures en suspens malgré nos différentes relances, nous avons procédé à la <strong>suspension temporaire de votre compte Dayuse</strong> à compter du <var>{{date_suspension}}</var>.</div>
           <div class="e-box danger">
             <div class="e-row"><span class="e-lbl">Statut du compte</span><span class="e-val red">Suspendu ⛔</span></div>
@@ -1709,7 +1811,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#EF4444,#DC2626);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
           <div class="e-p">Despite several reminders, we note that <strong><var>{{nb_invoices}}</var> invoice(s)</strong> remain unpaid on your account. We invite you to settle this situation <strong>within 14 days</strong> to avoid any interruption of service.</div>
           <div class="e-box danger">
             <div class="e-row"><span class="e-lbl">Principal due</span><span class="e-val"><var>{{amount_due}}</var></span></div>
@@ -1762,7 +1864,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:#B91C1C;"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
           <div class="e-p">Due to the non-payment of your outstanding invoices despite our repeated reminders, we have proceeded with the <strong>temporary suspension of your Dayuse account</strong> effective <var>{{suspension_date}}</var>.</div>
           <div class="e-box danger">
             <div class="e-row"><span class="e-lbl">Account status</span><span class="e-val red">Suspended ⛔</span></div>
@@ -1938,7 +2040,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#10B981,#34D399);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Nous avons bien reçu votre règlement. Votre compte est désormais à jour — merci pour votre réactivité.</div>
           <div class="e-box success">
             <div class="e-row"><span class="e-lbl">Montant réglé</span><span class="e-val green"><var>{{montant_paye}}</var> ✓</span></div>
@@ -1978,7 +2080,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,#10B981,#34D399);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
           <div class="e-p">We have successfully received your payment. Your account is now up to date — thank you for your prompt action.</div>
           <div class="e-box success">
             <div class="e-row"><span class="e-lbl">Amount settled</span><span class="e-val green"><var>{{amount_paid}}</var> ✓</span></div>
@@ -2031,7 +2133,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,var(--p4),#34D399);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Nous avons bien reçu votre règlement de <strong><var>{{montant_paye}}</var></strong>. Votre compte Dayuse est désormais <strong>pleinement réactivé</strong>.</div>
           <div class="e-box success">
             <div class="e-row"><span class="e-lbl">Montant réglé</span><span class="e-val green"><var>{{montant_paye}}</var> ✓</span></div>
@@ -2040,6 +2142,10 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
           </div>
           <div class="e-p">Votre établissement est à nouveau visible sur la plateforme dayuse.com et vos réservations peuvent reprendre normalement.</div>
           <div class="e-btn-wrap"><span class="e-btn orange">Accéder à mon portail</span></div>
+          <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
+            <div class="e-opt-icon">🔄</div>
+            <div><div class="e-opt-title">Évitez une prochaine suspension</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour que vos futures factures Dayuse soient réglées automatiquement à chaque échéance — plus aucune démarche de votre part. <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
+          </div>
           <div class="e-box" style="background:#EFF6FF;border-color:#BFDBFE;margin-top:14px;">
             <div style="display:flex;gap:10px;align-items:flex-start;">
               <span style="font-size:16px;flex-shrink:0;">ℹ️</span>
@@ -2079,7 +2185,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,var(--p4),#34D399);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
           <div class="e-p">We have received your payment of <strong><var>{{amount_paid}}</var></strong>. Your Dayuse account is now <strong>fully reactivated</strong>.</div>
           <div class="e-box success">
             <div class="e-row"><span class="e-lbl">Amount settled</span><span class="e-val green"><var>{{amount_paid}}</var> ✓</span></div>
@@ -2088,6 +2194,10 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
           </div>
           <div class="e-p">Your property is once again visible on the dayuse.com platform and new bookings can resume as normal.</div>
           <div class="e-btn-wrap"><span class="e-btn orange">Access my portal</span></div>
+          <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
+            <div class="e-opt-icon">🔄</div>
+            <div><div class="e-opt-title">Avoid a future suspension</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> so your future Dayuse invoices are settled automatically at every due date — no action required on your part. <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
+          </div>
           <div class="e-box" style="background:#EFF6FF;border-color:#BFDBFE;margin-top:14px;">
             <div style="display:flex;gap:10px;align-items:flex-start;">
               <span style="font-size:16px;flex-shrink:0;">ℹ️</span>
@@ -2127,7 +2237,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,var(--p4),#34D399);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Cher partenaire <var>{{nom_hotel}}</var>,</div>
+          <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
           <div class="e-p">Nous avons bien reçu votre règlement de <strong><var>{{montant_paye}}</var></strong>. Votre compte Dayuse est désormais <strong>pleinement réactivé</strong>.</div>
           <div class="e-box success">
             <div class="e-row"><span class="e-lbl">Montant réglé</span><span class="e-val green"><var>{{montant_paye}}</var> ✓</span></div>
@@ -2182,7 +2292,7 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
         <div class="e-stripe" style="background:linear-gradient(90deg,var(--p4),#34D399);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
-          <div class="e-hi">Dear partner <var>{{hotel_name}}</var>,</div>
+          <div class="e-hi">Dear Partner <var>{{hotel_name}}</var>,</div>
           <div class="e-p">We have received your payment of <strong><var>{{amount_paid}}</var></strong>. Your Dayuse account is now <strong>fully reactivated</strong>.</div>
           <div class="e-box success">
             <div class="e-row"><span class="e-lbl">Amount settled</span><span class="e-val green"><var>{{amount_paid}}</var> ✓</span></div>
@@ -2221,31 +2331,314 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
 </div>
 
 <script>
-/* Single-page navigation — no page switching */
+/* ─────────────────────────────────────────
+   NAVIGATION HELPERS
+───────────────────────────────────────── */
 function goTo(id){
   const el=document.getElementById(id);
   if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
 }
-function goHome(){
-  window.scrollTo({top:0,behavior:'smooth'});
-}
+function goHome(){window.scrollTo({top:0,behavior:'smooth'});}
 function scrollTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
 function e(id){event.stopPropagation();document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
 
+function setActiveTab(el){
+  if(!el)return;
+  document.querySelectorAll('.hdr-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
 
-const sections=[...document.querySelectorAll('.email-card,.phase-block')];
-const links=[...document.querySelectorAll('.sb-item')];
-const obs=new IntersectionObserver(entries=>{
-  entries.forEach(en=>{
-    if(en.isIntersecting){
-      const id=en.target.id;
-      links.forEach(l=>{l.classList.remove('active');l.style.background='';});
-      const a=document.querySelector(`.sb-item[href="#${id}"]`);
-      if(a){a.classList.add('active');a.style.background='rgba(255,255,255,.1)';}
+/* ─────────────────────────────────────────
+   FR / EN GLOBAL TOGGLE
+───────────────────────────────────────── */
+const COMPANIONS={'a6':'a6en','a9b':'a9ben','a7':'a7en','a16':'a16en','d1':'d1en','a8':'a8en','a15':'a15en'};
+const COMPANION_IDS=new Set(Object.values(COMPANIONS));
+
+function setGlobalLang(lang){
+  localStorage.setItem('dy-lang',lang);
+  applyLang(lang);
+}
+
+function applyLang(lang){
+  document.body.classList.toggle('lang-en',lang==='en');
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.lang===lang);
+  });
+}
+
+function findDashedSep(card){
+  for(const child of card.children){
+    const s=child.getAttribute('style')||'';
+    if(s.includes('border-top')&&s.includes('dashed')&&s.includes('margin-top:24px'))return child;
+  }
+  return null;
+}
+
+function addLangToggle(card){
+  const anchor=card.querySelector(':scope>.card-meta')||card.querySelector(':scope>.card-head');
+  if(!anchor)return;
+  if(anchor.querySelector('.card-lang-bar'))return; // already added
+  const bar=document.createElement('div');
+  bar.className='card-lang-bar';
+  bar.innerHTML='<button class="lang-btn" data-lang="fr" onclick="setGlobalLang(\'fr\')">FR</button><button class="lang-btn" data-lang="en" onclick="setGlobalLang(\'en\')">EN</button>';
+  anchor.style.display='flex';
+  anchor.style.alignItems='flex-start';
+  anchor.style.gap='10px';
+  anchor.appendChild(bar);
+}
+
+function initFrEn(){
+  // Mark companion EN cards
+  COMPANION_IDS.forEach(id=>{
+    const card=document.getElementById(id);
+    if(!card)return;
+    const frId=Object.keys(COMPANIONS).find(k=>COMPANIONS[k]===id);
+    card.dataset.companionFor=frId;
+    addLangToggle(card);
+  });
+
+  // Mark FR cards that have companions
+  Object.keys(COMPANIONS).forEach(frId=>{
+    const card=document.getElementById(frId);
+    if(!card)return;
+    card.dataset.hasCompanion=COMPANIONS[frId];
+    const shell=card.querySelector(':scope>.email-shell');
+    if(shell)shell.dataset.lp='fr';
+    addLangToggle(card);
+  });
+
+  // Handle inline FR+EN cards (dashed separator)
+  document.querySelectorAll('.email-card').forEach(card=>{
+    if(COMPANION_IDS.has(card.id))return;
+    if(COMPANIONS[card.id])return;
+    const sep=findDashedSep(card);
+    if(!sep)return;
+    const sepIsEn=/anglaise|english/i.test(sep.textContent);
+    sep.dataset.lp=sepIsEn?'en':'fr';
+    const firstShell=card.querySelector(':scope>.email-shell');
+    if(firstShell)firstShell.dataset.lp=sepIsEn?'fr':'en';
+    addLangToggle(card);
+  });
+
+  // Apply stored preference
+  applyLang(localStorage.getItem('dy-lang')||'fr');
+}
+
+/* ─────────────────────────────────────────
+   CARD COLLAPSE / EXPAND
+───────────────────────────────────────── */
+function initCollapse(){
+  document.querySelectorAll('.email-card').forEach(card=>{
+    const metaEl=card.querySelector(':scope>.card-meta')||card.querySelector(':scope>.card-head');
+    if(!metaEl)return;
+    const allChildren=[...card.children];
+    const metaIdx=allChildren.indexOf(metaEl);
+    if(metaIdx===-1)return;
+    const toCollapse=allChildren.slice(metaIdx+1);
+    if(toCollapse.length===0)return;
+
+    const wrapper=document.createElement('div');
+    wrapper.className='card-body-collapsible collapsed';
+    toCollapse.forEach(el=>wrapper.appendChild(el));
+
+    const btn=document.createElement('button');
+    btn.className='card-expand-toggle';
+    btn.innerHTML='Voir l\'email <span class="tog-arrow">▼</span>';
+    btn.onclick=function(){
+      const collapsed=wrapper.classList.toggle('collapsed');
+      this.innerHTML=collapsed?'Voir l\'email <span class="tog-arrow">▼</span>':'Masquer <span class="tog-arrow">▲</span>';
+      this.classList.toggle('open',!collapsed);
+    };
+    card.appendChild(btn);
+    card.appendChild(wrapper);
+  });
+}
+
+/* ─────────────────────────────────────────
+   PHASE BULK CONTROLS
+───────────────────────────────────────── */
+function expandPhase(phaseBlock,expand){
+  phaseBlock.querySelectorAll('.card-body-collapsible').forEach(w=>{
+    w.classList.toggle('collapsed',!expand);
+    const btn=w.previousElementSibling;
+    if(btn&&btn.classList.contains('card-expand-toggle')){
+      btn.innerHTML=expand?'Masquer <span class="tog-arrow">▲</span>':'Voir l\'email <span class="tog-arrow">▼</span>';
+      btn.classList.toggle('open',expand);
     }
   });
-},{threshold:.2,rootMargin:`-${parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-total')||'146')}px 0px 0px 0px`});
-sections.forEach(s=>obs.observe(s));
+}
+
+function initBulkControls(){
+  document.querySelectorAll('.phase-block[id^="p"]').forEach(phase=>{
+    const header=phase.querySelector('.phase-header');
+    if(!header)return;
+    const ctrl=document.createElement('div');
+    ctrl.className='phase-bulk-controls';
+    ctrl.innerHTML='<button class="phase-bulk-btn" onclick="expandPhase(this.closest(\'.phase-block\'),true)">Tout déplier ↓</button><button class="phase-bulk-btn" onclick="expandPhase(this.closest(\'.phase-block\'),false)">Tout replier ↑</button>';
+    header.insertAdjacentElement('afterend',ctrl);
+  });
+}
+
+/* ─────────────────────────────────────────
+   PHASE INDICATOR (header pill)
+───────────────────────────────────────── */
+const PHASE_INFO={
+  'overview':{label:'Vue parcours',bg:'#37415120',color:'#374151'},
+  'design-system':{label:'Design Système',bg:'#4338CA20',color:'#4338CA'},
+  'p1':{label:'Phase 1 — Facturation',bg:'var(--p1-mid)',color:'var(--p1)'},
+  'p2':{label:'Phase 2 — Relances',bg:'var(--p2-mid)',color:'var(--p2)'},
+  'p3':{label:'Phase 3 — Warning',bg:'var(--p3-mid)',color:'var(--p3)'},
+  'p4':{label:'Phase 4 — Résolution',bg:'var(--p4-mid)',color:'var(--p4)'},
+  'p5':{label:'Phase 5 — Réactivation',bg:'var(--p5-mid)',color:'var(--p5)'},
+};
+
+function initPhaseIndicator(){
+  const pill=document.getElementById('phase-pill');
+  if(!pill)return;
+  const phaseObs=new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        const info=PHASE_INFO[en.target.id];
+        if(info){
+          pill.textContent=info.label;
+          pill.style.background=info.bg;
+          pill.style.color=info.color;
+          pill.style.borderColor=info.color;
+        }
+      }
+    });
+  },{threshold:0.05,rootMargin:'-80px 0px -60% 0px'});
+  document.querySelectorAll('.phase-block').forEach(b=>phaseObs.observe(b));
+}
+
+/* ─────────────────────────────────────────
+   SIDEBAR ACTIVE LINK + SMART SCROLL
+───────────────────────────────────────── */
+function initSidebarNav(){
+  const sections=[...document.querySelectorAll('.email-card,.phase-block')];
+  const links=[...document.querySelectorAll('.sb-item')];
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        const id=en.target.id;
+        links.forEach(l=>{l.classList.remove('active');l.style.background='';});
+        // Find matching link (consider companion cards map back to FR id)
+        const lookupId=en.target.dataset.companionFor||id;
+        const a=document.querySelector(`.sb-item[href="#${lookupId}"]`)||document.querySelector(`.sb-item[href="#${id}"]`);
+        if(a){a.classList.add('active');a.style.background='rgba(255,255,255,.1)';}
+      }
+    });
+  },{threshold:.15,rootMargin:`-80px 0px 0px 0px`});
+  sections.forEach(s=>obs.observe(s));
+
+  // Fix sidebar link scroll for companion cards
+  links.forEach(link=>{
+    link.addEventListener('click',function(ev){
+      const href=this.getAttribute('href')||'';
+      if(!href.startsWith('#'))return;
+      const id=href.slice(1);
+      if(COMPANIONS[id]){
+        ev.preventDefault();
+        const isEN=document.body.classList.contains('lang-en');
+        const targetId=isEN?COMPANIONS[id]:id;
+        document.getElementById(targetId)?.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    });
+  });
+}
+
+/* ─────────────────────────────────────────
+   JOURNEY TIMELINE BADGES
+───────────────────────────────────────── */
+const JOURNEY_META={
+  'a1':  {status:'refonte',type:'✉️ Manuel'},
+  'a2':  {status:'refonte',type:'⚡ Auto'},
+  'a11': {status:'new',    type:'⚡ Auto'},
+  'a12': {status:'bug',    type:'⚡ Auto'},
+  'a10': {status:'new',    type:'✉️ Manuel'},
+  'a5':  {status:'refonte',type:'⚡ Auto'},
+  'a4':  {status:'refonte',type:'⚡ Auto'},
+  'a3p2':{status:'refonte',type:'✉️ Manuel'},
+  'c1':  {status:'refonte',type:'⚡ Auto'},
+  'c2':  {status:'refonte',type:'⚡ Auto'},
+  'c3':  {status:'refonte',type:'⚡ Auto'},
+  'a6':  {status:'refonte',type:'✉️ Manuel'},
+  'a9b': {status:'new',    type:'⚡ Auto'},
+  'a7':  {status:'new',    type:'✉️ Manuel'},
+  'a16': {status:'new',    type:'✉️ Manuel'},
+  'd1':  {status:'new',    type:'⚡ Auto'},
+  'a8':  {status:'new',    type:'⚡ Auto'},
+  'a15': {status:'new',    type:'⚡ Auto'},
+};
+const STATUS_LABELS={new:'NEW',refonte:'Refonte',bug:'Bug',ok:'OK'};
+
+function initJourneyBadges(){
+  document.querySelectorAll('.h-email[onclick]').forEach(card=>{
+    const m=(card.getAttribute('onclick')||'').match(/goTo\(['"](.+?)['"]\)/);
+    if(!m)return;
+    const meta=JOURNEY_META[m[1]];
+    if(!meta)return;
+    const obj=card.querySelector('.he-obj');
+    if(!obj)return;
+    const foot=document.createElement('div');
+    foot.className='he-footer';
+    foot.innerHTML=`<span class="he-status he-status-${meta.status}">${STATUS_LABELS[meta.status]}</span><span class="he-type-icon">${meta.type}</span>`;
+    obj.insertAdjacentElement('afterend',foot);
+  });
+}
+
+/* ─────────────────────────────────────────
+   MOBILE DESIGN SYSTEME DRAWER
+───────────────────────────────────────── */
+function initMobileDS(){
+  const fab=document.createElement('button');
+  fab.className='mob-ds-fab';
+  fab.innerHTML='🎨 Design Système';
+  fab.onclick=openMobDS;
+
+  const overlay=document.createElement('div');
+  overlay.id='mob-ds-overlay';
+  overlay.className='mob-ds-overlay';
+  overlay.onclick=closeMobDS;
+
+  const drawer=document.createElement('div');
+  drawer.id='mob-ds-drawer';
+  drawer.className='mob-ds-drawer';
+  drawer.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <strong style="font-size:14px;">Design Système</strong>
+      <button onclick="closeMobDS()" style="border:none;background:none;font-size:18px;cursor:pointer;color:#666;">✕</button>
+    </div>
+    <p style="font-size:12.5px;color:#555;line-height:1.6;margin-bottom:16px;">Composants, couleurs et conventions réutilisés dans l'ensemble des 15 templates partenaires.</p>
+    <a href="#design-system" onclick="closeMobDS();goTo('design-system')" style="display:inline-flex;align-items:center;gap:6px;background:#4338CA;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;">Voir le Design Système →</a>
+  `;
+
+  document.body.appendChild(fab);
+  document.body.appendChild(overlay);
+  document.body.appendChild(drawer);
+}
+
+function openMobDS(){
+  document.getElementById('mob-ds-drawer')?.classList.add('open');
+  document.getElementById('mob-ds-overlay')?.classList.add('open');
+}
+function closeMobDS(){
+  document.getElementById('mob-ds-drawer')?.classList.remove('open');
+  document.getElementById('mob-ds-overlay')?.classList.remove('open');
+}
+
+/* ─────────────────────────────────────────
+   INIT
+───────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded',()=>{
+  initFrEn();
+  initCollapse();
+  initBulkControls();
+  initPhaseIndicator();
+  initSidebarNav();
+  initJourneyBadges();
+  initMobileDS();
+});
 </script>
 </body>
 </html>
