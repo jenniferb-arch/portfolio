@@ -291,12 +291,17 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
 
 /* ═══ MOBILE DESIGN SYSTEME DRAWER ═══ */
 .mob-ds-fab{display:none;}
+/* Drawer hidden on desktop */
+.mob-ds-drawer{display:none;}
+.mob-ds-overlay{display:none;}
+/* Neutralise les fonds colorés des en-têtes de phase (évite le fond vert p4) */
+.phase-header{background:#fff!important;}
 @media(max-width:768px){
   .layout{flex-direction:column;}
   aside{width:100%;min-width:unset;height:auto;position:relative;top:auto;}
   main{max-width:100%;}
   .mob-ds-fab{display:flex;align-items:center;gap:6px;position:fixed;bottom:20px;right:18px;z-index:500;background:#4338CA;color:#fff;border:none;border-radius:99px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);}
-  .mob-ds-drawer{position:fixed;right:-110%;top:0;bottom:0;z-index:600;width:88%;max-width:360px;background:#fff;box-shadow:-6px 0 30px rgba(0,0,0,.15);transition:right .25s ease;overflow-y:auto;padding:24px 20px;}
+  .mob-ds-drawer{display:block;position:fixed;right:-110%;top:0;bottom:0;z-index:600;width:88%;max-width:360px;background:#fff;box-shadow:-6px 0 30px rgba(0,0,0,.15);transition:right .25s ease;overflow-y:auto;padding:24px 20px;}
   .mob-ds-drawer.open{right:0;}
   .mob-ds-overlay{display:none;position:fixed;inset:0;z-index:590;background:rgba(0,0,0,.4);}
   .mob-ds-overlay.open{display:block;}
