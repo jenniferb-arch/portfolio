@@ -2334,18 +2334,81 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
 /* ─────────────────────────────────────────
    NAVIGATION HELPERS
 ───────────────────────────────────────── */
-function goTo(id){
-  const el=document.getElementById(id);
-  if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
-}
-function goHome(){window.scrollTo({top:0,behavior:'smooth'});}
-function scrollTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
-function e(id){event.stopPropagation();document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
-
+/* Switch Journey ↔ Design Système views */
 function setActiveTab(el){
   if(!el)return;
   document.querySelectorAll('.hdr-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
+  const isDS=(el.getAttribute('href')==='#design-system');
+  const overview=document.getElementById('overview');
+  const ds=document.getElementById('design-system');
+  const phases=document.querySelectorAll('.phase-block[id^="p"]');
+  if(overview)overview.style.display=isDS?'none':'';
+  if(ds)ds.style.display=isDS?'':'none';
+  phases.forEach(p=>p.style.display=isDS?'none':'');
+  setTimeout(()=>{
+    if(isDS&&ds)ds.scrollIntoView({behavior:'smooth',block:'start'});
+    else window.scrollTo({top:0,behavior:'smooth'});
+  },50);
+}
+
+/* Navigate to an email card and auto-expand it */
+function goTo(id){
+  /* if Design Système tab is active, switch to Journey first */
+  const journeyTab=document.querySelector('.hdr-tab');
+  if(journeyTab&&!journeyTab.classList.contains('active')){
+    setActiveTab(journeyTab);
+    setTimeout(()=>_expandAndScroll(id),120);
+    return;
+  }
+  _expandAndScroll(id);
+}
+
+function _expandAndScroll(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  /* auto-expand collapsed card */
+  const body=el.querySelector('.card-body-collapsible');
+  const btn=el.querySelector('.card-expand-toggle');
+  if(body&&body.classList.contains('collapsed')){
+    body.classList.remove('collapsed');
+    if(btn){btn.innerHTML='Masquer <span class="tog-arrow">▲</span>';btn.classList.add('open');}
+  }
+  /* ensure FR is shown (reset to FR if EN companion would be shown) */
+  if(COMPANIONS&&COMPANIONS[id]&&document.body.classList.contains('lang-en')){
+    applyLang('fr');
+  }
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function goHome(){window.scrollTo({top:0,behavior:'smooth'});}
+function scrollTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
+function e(id){event.stopPropagation();document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
+
+/* Floating back-to-journey button */
+function initBackButton(){
+  const btn=document.createElement('button');
+  btn.id='back-to-journey-btn';
+  btn.innerHTML='↑ Vue parcours';
+  Object.assign(btn.style,{
+    position:'fixed',bottom:'72px',right:'18px',zIndex:'489',
+    background:'#fff',border:'1.5px solid #E5E7EB',borderRadius:'99px',
+    padding:'7px 14px',fontSize:'11px',fontWeight:'600',color:'#374151',
+    cursor:'pointer',boxShadow:'0 2px 8px rgba(0,0,0,.12)',
+    display:'none',transition:'opacity .2s',whiteSpace:'nowrap'
+  });
+  btn.onclick=()=>{
+    setActiveTab(document.querySelector('.hdr-tab'));
+  };
+  document.body.appendChild(btn);
+  /* Show when overview is out of view */
+  const overview=document.getElementById('overview');
+  if(overview){
+    const obs=new IntersectionObserver(entries=>{
+      btn.style.display=entries[0].isIntersecting?'none':'block';
+    },{threshold:0});
+    obs.observe(overview);
+  }
 }
 
 /* ─────────────────────────────────────────
@@ -2499,12 +2562,8 @@ function initPhaseIndicator(){
     entries.forEach(en=>{
       if(en.isIntersecting){
         const info=PHASE_INFO[en.target.id];
-        if(info){
-          pill.textContent=info.label;
-          pill.style.background=info.bg;
-          pill.style.color=info.color;
-          pill.style.borderColor=info.color;
-        }
+        if(info)pill.textContent=info.label;
+        /* keep pill neutral — no color changes to avoid unwanted green */
       }
     });
   },{threshold:0.05,rootMargin:'-80px 0px -60% 0px'});
@@ -2631,6 +2690,28 @@ function closeMobDS(){
    INIT
 ───────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded',()=>{
+  /* Design Système caché par défaut — vue parcours active */
+  const dsSection=document.getElementById('design-system');
+  if(dsSection)dsSection.style.display='none';
+
+  /* Intercept tab clicks — prevent anchor jump, handle view switching */
+  document.querySelectorAll('.hdr-tab').forEach(tab=>{
+    tab.addEventListener('click',function(ev){ev.preventDefault();setActiveTab(this);});
+  });
+  /* Sidebar "Design Système" link */
+  document.querySelectorAll('.sb-item[href="#design-system"]').forEach(link=>{
+    link.addEventListener('click',function(ev){
+      ev.preventDefault();
+      setActiveTab(document.querySelectorAll('.hdr-tab')[1]);
+    });
+  });
+  document.querySelectorAll('.sb-item[href="#overview"]').forEach(link=>{
+    link.addEventListener('click',function(ev){
+      ev.preventDefault();
+      setActiveTab(document.querySelector('.hdr-tab'));
+    });
+  });
+
   initFrEn();
   initCollapse();
   initBulkControls();
@@ -2638,6 +2719,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   initSidebarNav();
   initJourneyBadges();
   initMobileDS();
+  initBackButton();
 });
 </script>
 </body>
