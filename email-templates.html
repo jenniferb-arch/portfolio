@@ -294,8 +294,20 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
 /* Drawer hidden on desktop */
 .mob-ds-drawer{display:none;}
 .mob-ds-overlay{display:none;}
-/* Neutralise les fonds colorés des en-têtes de phase (évite le fond vert p4) */
-.phase-header{background:#fff!important;}
+/* ═══ DESIGN SYSTÈME DAYUSE — neutralise le rainbow, applique noir/orange/blanc ═══ */
+/* Journey view : phase blocks */
+.h-phase{border-color:var(--dy-border)!important;}
+.h-phase-head{background:#141414!important;color:#fff!important;}
+.h-phase-head .ph-left .ph-num{color:var(--dy-orange)!important;opacity:1!important;}
+.h-phase-head .ph-timing{color:rgba(255,255,255,.6)!important;}
+/* Email cards in journey : neutral border, orange on hover */
+.h-email{border-color:var(--dy-border)!important;}
+.h-email:hover{border-color:var(--dy-orange)!important;box-shadow:0 4px 14px rgba(255,109,0,.12)!important;}
+.h-email .he-ref{color:var(--dy-black)!important;}
+/* Detail view : phase section headers */
+.phase-header{background:#fff!important;border-left-color:var(--dy-orange)!important;}
+.phase-header h2{color:var(--dy-black)!important;}
+.phase-header p{color:var(--dy-gray)!important;opacity:1!important;}
 @media(max-width:768px){
   .layout{flex-direction:column;}
   aside{width:100%;min-width:unset;height:auto;position:relative;top:auto;}
