@@ -15,15 +15,14 @@
   --p5:#8B5CF6; --p5-light:#F5F3FF; --p5-mid:#8B5CF620;
   --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --header-h:70px;
-  --frise-h:76px;
-  --nav-total:calc(var(--header-h) + var(--frise-h));
+  --nav-total:var(--header-h);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:var(--font);background:var(--dy-bg);color:var(--dy-black);display:flex;flex-direction:column;min-height:100vh;}
 
 /* ── FRISE ── */
-#frise{position:sticky;top:var(--header-h);z-index:100;background:#fff;border-bottom:1px solid var(--dy-border);box-shadow:0 2px 8px rgba(0,0,0,.07);}
+#frise{background:#fff;border-radius:10px;border:1px solid var(--dy-border);overflow:hidden;margin-bottom:24px;}
 .frise-inner{display:flex;align-items:stretch;overflow-x:auto;}
 .frise-phase{flex:1;min-width:160px;display:flex;flex-direction:column;cursor:pointer;transition:background .15s;border-right:1px solid var(--dy-border);}
 .frise-phase:last-child{border-right:none;}
@@ -37,7 +36,7 @@ body{font-family:var(--font);background:var(--dy-bg);color:var(--dy-black);displ
 
 /* ── LAYOUT ── */
 .layout{display:flex;flex:1;}
-aside{width:220px;min-width:220px;background:#1A1A1A;position:sticky;top:var(--nav-total);height:calc(100vh - var(--nav-total));overflow-y:auto;display:flex;flex-direction:column;}
+aside{width:220px;min-width:220px;background:#1A1A1A;position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;display:flex;flex-direction:column;}
 .sb-section{padding:12px 14px 4px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3);}
 .sb-item{display:flex;align-items:center;gap:8px;padding:7px 14px;margin:1px 6px;border-radius:6px;cursor:pointer;font-size:12px;color:rgba(255,255,255,.6);transition:background .12s,color .12s;text-decoration:none;}
 .sb-item:hover{background:rgba(255,255,255,.07);color:#fff;}
@@ -245,18 +244,74 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
 </head>
 <body>
 
-<div id="page-home">
-  <div class="home-header">
-    <div>
-      <div class="home-brand">DA<span>)</span>USE</div>
-      <div class="home-subtitle">Cycle de facturation & recouvrement partenaires</div>
-    </div>
-    <div style="font-size:11px;color:var(--dy-gray);">15 templates · 5 phases · Juin 2026</div>
+<div class="home-header">
+  <div>
+    <div class="home-brand">DA<span>)</span>USE</div>
+    <div class="home-subtitle">Cycle de facturation & recouvrement partenaires</div>
   </div>
+  <div style="font-size:11px;color:var(--dy-gray);">15 templates · 5 phases · Juin 2026</div>
+</div>
 
-  <div class="home-body">
-    <div class="home-title">Parcours email · Vue hôtel</div>
-    <div class="home-desc">Ordre chronologique — du premier envoi de facture à la mise en demeure. Cliquez sur un email pour ouvrir son contenu.</div>
+<div class="layout">
+
+<!-- ══ SIDEBAR ══ -->
+<aside>
+  <div class="sb-section">Navigation</div>
+  <a class="sb-item" href="#overview"><span class="sb-dot" style="background:#374151"></span>Vue parcours</a>
+  <a class="sb-item" href="#design-system"><span class="sb-dot" style="background:#4338CA"></span>Design Système</a>
+
+  <div class="sb-section">Phase 1 — Facturation</div>
+  <a class="sb-item" href="#a1"><span class="sb-dot" style="background:var(--p1)"></span>A1 — Validation no-shows<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">EN</span></a>
+  <a class="sb-item" href="#a2"><span class="sb-dot" style="background:var(--p1)"></span>A2 — Facture émise (FR+EN)<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">FR</span></a>
+  <a class="sb-item" href="#a11"><span class="sb-dot" style="background:var(--p1)"></span>A11 — Rappel échéance J-7<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">NEW</span></a>
+  <a class="sb-item" href="#a12"><span class="sb-dot" style="background:var(--p1)"></span>A12 — Direct Debit<span class="sb-ref" style="background:#FEE2E2;color:#991B1B">BUG</span></a>
+  <a class="sb-item" href="#a10"><span class="sb-dot" style="background:var(--p1)"></span>A10 — Récap Accor<span class="sb-ref" style="background:#EDE9FE;color:#5B21B6">NEW</span></a>
+  <a class="sb-item" href="#a5"><span class="sb-dot" style="background:var(--p1)"></span>A5 — Note de crédit</a>
+  <a class="sb-item" href="#a4"><span class="sb-dot" style="background:var(--p1)"></span>A4 — Échec prélèvement</a>
+
+  <div class="sb-section">Phase 2 — Relances</div>
+  <a class="sb-item" href="#a3p2"><span class="sb-dot" style="background:var(--p2)"></span>A3 — Relance manuelle</a>
+  <a class="sb-item" href="#c1"><span class="sb-dot" style="background:var(--p2)"></span>C1 — Relance auto J+1</a>
+  <a class="sb-item" href="#c2"><span class="sb-dot" style="background:var(--p2)"></span>C2 — Relance auto J+15</a>
+  <a class="sb-item" href="#c3"><span class="sb-dot" style="background:var(--p2)"></span>C3 — Relance auto J+30</a>
+
+  <div class="sb-section">Phase 3 — Warning</div>
+  <a class="sb-item" href="#a6"><span class="sb-dot" style="background:var(--p3)"></span>A6 — Warning bad payer</a>
+  <a class="sb-item" href="#a6en"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A6 EN</a>
+  <a class="sb-item" href="#a9b"><span class="sb-dot" style="background:var(--p3)"></span>A9B — J-7 avant suspension</a>
+  <a class="sb-item" href="#a9ben"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A9B EN</a>
+  <a class="sb-item" href="#a7"><span class="sb-dot" style="background:var(--p3)"></span>A7 — Désactivation</a>
+  <a class="sb-item" href="#a7en"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A7 EN</a>
+  <a class="sb-item" href="#a16"><span class="sb-dot" style="background:var(--p3)"></span>A16 — Mise en demeure</a>
+  <a class="sb-item" href="#a16en"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A16 EN</a>
+
+  <div class="sb-section">Phase 4 & 5</div>
+  <a class="sb-item" href="#d1"><span class="sb-dot" style="background:var(--p4)"></span>D1 — Paiement reçu</a>
+  <a class="sb-item" href="#d1en"><span class="sb-dot" style="background:var(--p4);opacity:.5"></span>D1 EN</a>
+  <a class="sb-item" href="#a8"><span class="sb-dot" style="background:var(--p4)"></span>A8 — Réactivation</a>
+  <a class="sb-item" href="#a8en"><span class="sb-dot" style="background:var(--p4);opacity:.5"></span>A8 EN</a>
+  <a class="sb-item" href="#a15"><span class="sb-dot" style="background:var(--p4)"></span>A15 — Réactivation + DD auto</a>
+  <a class="sb-item" href="#a15en"><span class="sb-dot" style="background:var(--p4);opacity:.5"></span>A15 EN</a>
+
+  <div style="flex:1;"></div>
+  <div style="padding:14px;font-size:10px;color:rgba(255,255,255,.2);border-top:1px solid rgba(255,255,255,.07);line-height:1.7;">
+    15 templates · Juin 2026<br>
+    <span style="color:rgba(255,255,255,.35);">Variables en <span style="background:#FEF3C7;color:#92400E;padding:0 4px;border-radius:3px;">jaune</span></span>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main>
+
+<!-- ═══════════════════════ OVERVIEW ═══════════════════════ -->
+<div class="phase-block" id="overview">
+  <div class="phase-header" style="background:#F9FAFB;border-color:#374151;">
+    <div>
+      <h2 style="color:#1A1A1A;">Parcours email · Vue hôtel</h2>
+      <p style="color:#6B7280;">Ordre chronologique — cliquez sur un email pour y accéder directement.</p>
+    </div>
+    <span class="phase-count" style="background:#374151;color:#fff;">15 emails</span>
+  </div>
 
     <div class="h-legend">
       <div class="h-leg"><div class="h-leg-dot" style="background:#0EA5A0;"></div>Phase 1 — Facturation</div>
@@ -415,135 +470,8 @@ var{font-style:normal;background:#FEF3C7;color:#92400E;padding:1px 5px;border-ra
       </div>
     </div>
 
-  </div>
-</div><!-- /page-home -->
+</div><!-- /overview -->
 
-<div id="page-detail">
-
-<!-- ══ FRISE ══ -->
-<div id="frise">
-  <div class="frise-inner">
-
-    <div class="frise-phase" onclick="goHome()" style="flex:0.55;min-width:82px;border-right:2px solid rgba(0,0,0,.08);">
-      <div class="fp-head" style="background:#1A1A1A;">
-        <div><div class="fp-num">MAP</div><div class="fp-title">Parcours</div></div>
-      </div>
-      <div class="fp-emails">
-        <span class="fp-tag" style="background:#F3F4F6;color:#374151;" onclick="e('page-home')">Accueil</span>
-        <span class="fp-tag" style="background:#EDE9FE;color:#5B21B6;" onclick="e('design-system')">Design Sys.</span>
-      </div>
-    </div>
-
-    <div class="frise-phase" onclick="scrollTo('p1')">
-      <div class="fp-head" style="background:var(--p1);">
-        <div><div class="fp-num">PHASE 1</div><div class="fp-title">Facturation</div></div>
-      </div>
-      <div class="fp-emails">
-        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a1')">A1</span>
-        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a2')">A2</span>
-        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a11')">A11</span>
-        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a12')">A12</span>
-        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a10')">A10</span>
-        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a5')">A5</span>
-        <span class="fp-tag" style="background:var(--p1-light);color:var(--p1);" onclick="e('a4')">A4</span>
-      </div>
-    </div>
-
-    <div class="frise-phase" onclick="scrollTo('p2')">
-      <div class="fp-head" style="background:var(--p2);">
-        <div><div class="fp-num">PHASE 2</div><div class="fp-title">Relances impayés</div></div>
-      </div>
-      <div class="fp-emails">
-        <span class="fp-tag" style="background:var(--p2-light);color:var(--p2);" onclick="e('a3p2')">A3</span>
-        <span class="fp-tag" style="background:var(--p2-light);color:var(--p2);" onclick="e('c1')">C1</span>
-        <span class="fp-tag" style="background:var(--p2-light);color:var(--p2);" onclick="e('c2')">C2</span>
-        <span class="fp-tag" style="background:var(--p2-light);color:var(--p2);" onclick="e('c3')">C3</span>
-      </div>
-    </div>
-
-    <div class="frise-phase" onclick="scrollTo('p3')">
-      <div class="fp-head" style="background:var(--p3);">
-        <div><div class="fp-num">PHASE 3</div><div class="fp-title">Warning bad payers</div></div>
-      </div>
-      <div class="fp-emails">
-        <span class="fp-tag" style="background:var(--p3-light);color:var(--p3);" onclick="e('a6')">A6</span>
-        <span class="fp-tag" style="background:var(--p3-light);color:var(--p3);" onclick="e('a9b')">A9B</span>
-        <span class="fp-tag" style="background:var(--p3-light);color:var(--p3);" onclick="e('a7')">A7</span>
-        <span class="fp-tag" style="background:var(--p3-light);color:var(--p3);" onclick="e('a16')">A16</span>
-      </div>
-    </div>
-
-    <div class="frise-phase" onclick="scrollTo('p4')">
-      <div class="fp-head" style="background:var(--p4);">
-        <div><div class="fp-num">PHASE 4</div><div class="fp-title">Résolution</div></div>
-      </div>
-      <div class="fp-emails">
-        <span class="fp-tag" style="background:var(--p4-light);color:var(--p4);" onclick="e('d1')">D1</span>
-      </div>
-    </div>
-
-    <div class="frise-phase" onclick="scrollTo('p5')">
-      <div class="fp-head" style="background:var(--p5);">
-        <div><div class="fp-num">PHASE 5</div><div class="fp-title">Réactivation</div></div>
-      </div>
-      <div class="fp-emails">
-        <span class="fp-tag" style="background:var(--p5-light);color:var(--p5);" onclick="e('a8')">A8</span>
-        <span class="fp-tag" style="background:var(--p5-light);color:var(--p5);" onclick="e('a15')">A15</span>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="layout">
-
-<!-- ══ SIDEBAR ══ -->
-<aside>
-  <div class="sb-section">Navigation</div>
-  <a class="sb-item" href="#page-home"><span class="sb-dot" style="background:#374151"></span>Vue parcours</a>
-  <a class="sb-item" href="#design-system"><span class="sb-dot" style="background:#4338CA"></span>Design Système</a>
-  <div class="sb-section">Phase 1 — Facturation</div>
-  <a class="sb-item" href="#a1"><span class="sb-dot" style="background:var(--p1)"></span>A1 — Validation no-shows<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">EN</span></a>
-  <a class="sb-item" href="#a2"><span class="sb-dot" style="background:var(--p1)"></span>A2 — Facture émise (FR+EN)<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">FR</span></a>
-  <a class="sb-item" href="#a11"><span class="sb-dot" style="background:var(--p1)"></span>A11 — Rappel échéance J-7<span class="sb-ref" style="background:var(--p1-light);color:var(--p1)">NEW</span></a>
-  <a class="sb-item" href="#a12"><span class="sb-dot" style="background:var(--p1)"></span>A12 — Direct Debit<span class="sb-ref" style="background:#FEE2E2;color:#991B1B">BUG</span></a>
-  <a class="sb-item" href="#a10"><span class="sb-dot" style="background:var(--p1)"></span>A10 — Récap Accor<span class="sb-ref" style="background:#EDE9FE;color:#5B21B6">NEW</span></a>
-  <a class="sb-item" href="#a5"><span class="sb-dot" style="background:var(--p1)"></span>A5 — Note de crédit</a>
-  <a class="sb-item" href="#a4"><span class="sb-dot" style="background:var(--p1)"></span>A4 — Échec prélèvement</a>
-
-  <div class="sb-section">Phase 2 — Relances</div>
-  <a class="sb-item" href="#a3p2"><span class="sb-dot" style="background:var(--p2)"></span>A3 — Relance manuelle</a>
-  <a class="sb-item" href="#c1"><span class="sb-dot" style="background:var(--p2)"></span>C1 — Relance auto J+1</a>
-  <a class="sb-item" href="#c2"><span class="sb-dot" style="background:var(--p2)"></span>C2 — Relance auto J+15</a>
-  <a class="sb-item" href="#c3"><span class="sb-dot" style="background:var(--p2)"></span>C3 — Relance auto J+30</a>
-
-  <div class="sb-section">Phase 3 — Warning</div>
-  <a class="sb-item" href="#a6"><span class="sb-dot" style="background:var(--p3)"></span>A6 — Warning bad payer</a>
-  <a class="sb-item" href="#a6en"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A6 EN</a>
-  <a class="sb-item" href="#a9b"><span class="sb-dot" style="background:var(--p3)"></span>A9B — J-7 avant suspension</a>
-  <a class="sb-item" href="#a9ben"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A9B EN</a>
-  <a class="sb-item" href="#a7"><span class="sb-dot" style="background:var(--p3)"></span>A7 — Désactivation</a>
-  <a class="sb-item" href="#a7en"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A7 EN</a>
-  <a class="sb-item" href="#a16"><span class="sb-dot" style="background:var(--p3)"></span>A16 — Mise en demeure</a>
-  <a class="sb-item" href="#a16en"><span class="sb-dot" style="background:var(--p3);opacity:.5"></span>A16 EN</a>
-
-  <div class="sb-section">Phase 4 & 5</div>
-  <a class="sb-item" href="#d1"><span class="sb-dot" style="background:var(--p4)"></span>D1 — Paiement reçu</a>
-  <a class="sb-item" href="#d1en"><span class="sb-dot" style="background:var(--p4);opacity:.5"></span>D1 EN</a>
-  <a class="sb-item" href="#a8"><span class="sb-dot" style="background:var(--p4)"></span>A8 — Réactivation</a>
-  <a class="sb-item" href="#a8en"><span class="sb-dot" style="background:var(--p4);opacity:.5"></span>A8 EN</a>
-  <a class="sb-item" href="#a15"><span class="sb-dot" style="background:var(--p4)"></span>A15 — Réactivation + DD auto</a>
-  <a class="sb-item" href="#a15en"><span class="sb-dot" style="background:var(--p4);opacity:.5"></span>A15 EN</a>
-
-  <div style="flex:1;"></div>
-  <div style="padding:14px;font-size:10px;color:rgba(255,255,255,.2);border-top:1px solid rgba(255,255,255,.07);line-height:1.7;">
-    15 templates · Juin 2026<br>
-    <span style="color:rgba(255,255,255,.35);">Variables en <span style="background:#FEF3C7;color:#92400E;padding:0 4px;border-radius:3px;">jaune</span></span>
-  </div>
-</aside>
-
-<!-- ══ MAIN ══ -->
-<main>
 
 <!-- ═══════════════════════ DESIGN SYSTÈME ═══════════════════════ -->
 <div class="phase-block" id="design-system">
@@ -2304,12 +2232,6 @@ function goHome(){
 function scrollTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
 function e(id){event.stopPropagation();document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
 
-/* Move frise to sit directly under the sticky home-header */
-document.addEventListener('DOMContentLoaded',()=>{
-  const frise=document.getElementById('frise');
-  const header=document.querySelector('.home-header');
-  if(frise&&header){header.after(frise);}
-});
 
 const sections=[...document.querySelectorAll('.email-card,.phase-block')];
 const links=[...document.querySelectorAll('.sb-item')];
@@ -2325,6 +2247,5 @@ const obs=new IntersectionObserver(entries=>{
 },{threshold:.2,rootMargin:`-${parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-total')||'146')}px 0px 0px 0px`});
 sections.forEach(s=>obs.observe(s));
 </script>
-</div><!-- /page-detail -->
 </body>
 </html>
