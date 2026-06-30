@@ -780,7 +780,7 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
       <div class="card-ref-wrap"><div class="card-ref p1-color">A1</div></div>
       <div class="card-info">
         <div class="card-title">Validation orders & déclaration no-shows <span class="lang-badge lang-en">EN</span></div>
-        <div class="card-desc">Envoyé le 1er du mois. Le partenaire valide la liste des orders facturables et déclare ses no-shows avant la date limite. C'est le point de départ du cycle de facturation.</div>
+        <div class="card-desc">Envoyé le 1er du mois. Le partenaire valide la liste des réservations facturables et déclare ses no-shows avant la date limite. C'est le point de départ du cycle de facturation.</div>
         <div class="card-pills">
           <span class="pill pill-gray">Déclencheur : Cron 1er du mois</span>
           <span class="pill pill-auto">100% Automatique</span>
@@ -817,23 +817,23 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
     <div style="margin-top:24px;border-top:2px dashed #E5E7EB;padding-top:16px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#6B7280;text-transform:uppercase;margin-bottom:12px;">Version française (FR)</div>
     <div class="email-shell">
-      <div class="subject-bar"><span>Objet :</span><span class="subject-val">[Action requise avant le <var>{{date_limite}}</var>] Validez vos orders pour <var>{{mois}}</var> — <var>{{nom_hotel}}</var></span></div>
+      <div class="subject-bar"><span>Objet :</span><span class="subject-val">[Action requise avant le <var>{{date_limite}}</var>] Validez vos réservations pour <var>{{mois}}</var> — <var>{{nom_hotel}}</var></span></div>
       <div class="email-body">
         <div class="e-stripe" style="background:linear-gradient(90deg,#F5A623,#F0C060);"></div>
         <div class="e-logobar"><div class="e-brand">DA)USE</div><div class="e-tagline">Room to Daydream</div></div>
         <div class="e-body">
           <div class="e-hi">Cher Partenaire <var>{{nom_hotel}}</var>,</div>
-          <div class="e-p">La liste de vos orders pour <var>{{mois}}</var> est désormais disponible dans la section <strong>Orders facturables</strong> de votre portail.</div>
-          <div class="e-btn-wrap"><span class="e-btn orange">Consulter mes orders</span></div>
-          <div class="e-p">Vérifiez la liste des orders et assurez-vous qu'elle est exacte. Déclarez vos no-shows avant la date limite ci-dessous.</div>
+          <div class="e-p">La liste de vos réservations pour <var>{{mois}}</var> est désormais disponible dans la section <strong>Réservations facturables</strong> de votre portail.</div>
+          <div class="e-btn-wrap"><span class="e-btn orange">Consulter mes réservations</span></div>
+          <div class="e-p">Vérifiez la liste des réservations et assurez-vous qu'elle est exacte. Déclarez vos no-shows avant la date limite ci-dessous.</div>
           <div class="e-box warn">
             <div class="e-row"><span class="e-lbl">Date limite de déclaration no-show</span><span class="e-val" style="color:#F59E0B;font-size:14px;"><var>{{date_limite}}</var></span></div>
             <div class="e-row"><span class="e-lbl">Date de génération de la facture</span><span class="e-val"><var>{{date_facture}}</var></span></div>
           </div>
           <div class="e-box info">
-            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:14px;flex-shrink:0;">ℹ️</span><div style="font-size:12.5px;color:#1E40AF;line-height:1.55;">Après le <var>{{date_limite}}</var>, tous les orders sont considérés comme confirmés et la commission est due. <strong>Aucune modification ne sera possible après cette date.</strong></div></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-size:14px;flex-shrink:0;">ℹ️</span><div style="font-size:12.5px;color:#1E40AF;line-height:1.55;">Après le <var>{{date_limite}}</var>, toutes les réservations sont considérées comme confirmées et la commission est due. <strong>Aucune modification ne sera possible après cette date.</strong></div></div>
           </div>
-          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à la validation de vos orders, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
+          <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à la validation de vos réservations, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
         <div class="e-footer"><div class="e-footer-h">Besoin d'aide ?</div><div class="e-footer-links"><a href="#">Consulter notre FAQ</a></div><div class="e-legal">Email envoyé par Dayuse.com · DAY USE S.A.S., immatriculée en France n° 524 948 924</div></div>
       </div>
@@ -875,10 +875,9 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
           </div>
           <div class="e-btn-wrap"><span class="e-btn orange">Payer ma facture</span></div>
           <div class="e-hr"></div>
-          <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Options de paiement</div>
-          <div class="e-payment-opt"><div class="e-opt-icon">💳</div><div><div class="e-opt-title">Par carte bancaire</div><div class="e-opt-desc">Connectez-vous à votre portail · Section "Invoices" · Sélectionnez la facture · Cliquez sur "Pay"</div></div></div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimisez vos paiements</div>
+          <div class="e-payment-opt"><div class="e-opt-icon">🔄</div><div><div class="e-opt-title">Évitez les prochaines relances en activant le Direct Debit</div><div class="e-opt-desc">Vos factures Dayuse seront réglées automatiquement à chaque échéance, sans démarche de votre part — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">🏦</div><div><div class="e-opt-title">Par virement bancaire</div><div class="e-opt-desc">Notre RIB est disponible en pièce jointe. Merci d'indiquer impérativement le numéro <var>{{num_facture}}</var> en référence du virement.</div></div></div>
-          <div class="e-dd-nudge" style="margin-top:14px;"><div style="font-size:16px;flex-shrink:0;">🔄</div><div style="flex:1;"><div style="font-size:12.5px;font-weight:700;color:#1E40AF;margin-bottom:3px;">Simplifiez vos paiements — activez le prélèvement automatique</div><div style="font-size:12px;color:#374151;line-height:1.5;">Votre établissement est éligible au Direct Debit (zones €, UK et USA). Vos factures Dayuse seront réglées automatiquement à échéance, sans action de votre part.</div></div><span class="e-dd-nudge-cta">Souscrire</span></div>
           <div class="e-box info" style="margin-top:16px;"><div class="e-row" style="border-bottom:none;padding-bottom:0;"><span style="font-size:12px;color:#1E40AF;">ℹ️ &nbsp;Passé la date d'échéance, des intérêts de retard et frais de recouvrement peuvent s'appliquer — voir détails sur votre facture.</span></div></div>
           <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à cette facture, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
@@ -903,10 +902,9 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
           </div>
           <div class="e-btn-wrap"><span class="e-btn orange">Pay my invoice</span></div>
           <div class="e-hr"></div>
-          <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Payment options</div>
-          <div class="e-payment-opt"><div class="e-opt-icon">💳</div><div><div class="e-opt-title">By credit card</div><div class="e-opt-desc">Log in to your portal · "Invoices" section · Select the invoice · Click "Pay"</div></div></div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimize your payments</div>
+          <div class="e-payment-opt"><div class="e-opt-icon">🔄</div><div><div class="e-opt-title">Avoid future reminders by activating Direct Debit</div><div class="e-opt-desc">Your Dayuse invoices will be settled automatically at each billing cycle, with no action required on your part — <a href="#" style="color:#1D4ED8;font-weight:700;">Activate →</a></div></div></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">🏦</div><div><div class="e-opt-title">By bank transfer</div><div class="e-opt-desc">Our bank details are attached. Please indicate invoice number <var>{{invoice_number}}</var> as the payment reference.</div></div></div>
-          <div class="e-dd-nudge" style="margin-top:14px;"><div style="font-size:16px;flex-shrink:0;">🔄</div><div style="flex:1;"><div style="font-size:12.5px;font-weight:700;color:#1E40AF;margin-bottom:3px;">Simplify your payments — set up Direct Debit</div><div style="font-size:12px;color:#374151;line-height:1.5;">Your property is eligible for Direct Debit (€, UK and USA zones). Your Dayuse invoices will be settled automatically on the due date, with no action required from you.</div></div><span class="e-dd-nudge-cta">Subscribe</span></div>
           <div class="e-box info" style="margin-top:16px;"><div class="e-row" style="border-bottom:none;padding-bottom:0;"><span style="font-size:12px;color:#1E40AF;">ℹ️ &nbsp;After the due date, late penalty and interest fees may apply — details on your invoice.</span></div></div>
           <div class="e-sign"><div class="e-sign-pre">For any questions regarding this invoice, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
@@ -951,7 +949,7 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
           <div class="e-btn-wrap"><span class="e-btn orange">Régler ma facture</span></div>
           <div class="e-hr"></div>
           <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimisez vos paiements</div>
-          <div class="e-payment-opt"><div class="e-opt-icon">🔄</div><div><div class="e-opt-title">Activez le Direct Debit</div><div class="e-opt-desc">Activez le prélèvement automatique et ne manquez plus jamais une échéance. Vos factures Dayuse sont réglées automatiquement, sans démarche de votre part.<br><br>Notre RIB est disponible en pièce jointe. Merci d'indiquer impérativement le numéro de facture en référence du virement.</div></div></div>
+          <div class="e-payment-opt"><div class="e-opt-icon">🔄</div><div><div class="e-opt-title">Évitez les prochaines relances en activant le Direct Debit</div><div class="e-opt-desc">Vos factures Dayuse seront réglées automatiquement à chaque échéance, sans démarche de votre part — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">📎</div><div><div class="e-opt-title">Justificatif TVA</div><div class="e-opt-desc">Le certificat de TVA Dayuse est joint à cet email pour vos besoins comptables.</div></div></div>
           <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à cette facture, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe comptabilité Dayuse</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
@@ -979,7 +977,7 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
           <div class="e-btn-wrap"><span class="e-btn orange">Pay my invoice</span></div>
           <div class="e-hr"></div>
           <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimize your payments</div>
-          <div class="e-payment-opt"><div class="e-opt-icon">🔄</div><div><div class="e-opt-title">Activate Direct Debit</div><div class="e-opt-desc">Activate automatic payments and never miss a due date. Your Dayuse invoices are settled automatically at each billing cycle, with no action required on your part.<br><br>Our bank details are attached to this email. Please include the invoice number as your payment reference.</div></div></div>
+          <div class="e-payment-opt"><div class="e-opt-icon">🔄</div><div><div class="e-opt-title">Avoid future reminders by activating Direct Debit</div><div class="e-opt-desc">Your Dayuse invoices will be settled automatically at each billing cycle, with no action required on your part — <a href="#" style="color:#1D4ED8;font-weight:700;">Activate →</a></div></div></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">📎</div><div><div class="e-opt-title">VAT certificate</div><div class="e-opt-desc">The Dayuse VAT certificate is attached to this email for your accounting records.</div></div></div>
           <div class="e-sign"><div class="e-sign-pre">For any questions regarding this invoice, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Accounting Team</div><div class="e-sign-contact"><a href="#">contact@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
@@ -1305,9 +1303,10 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
           </div>
           <div class="e-p">We kindly ask you to settle this amount as soon as possible. Please find attached a copy of your account statement and the outstanding invoice(s).</div>
           <div class="e-btn-wrap"><span class="e-btn orange">Settle my invoices</span></div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimize your payments</div>
           <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
             <div class="e-opt-icon">🔄</div>
-            <div><div class="e-opt-title">Avoid future reminders</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
+            <div><div class="e-opt-title">Avoid future reminders by activating Direct Debit</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Payment already made?</div><div class="e-opt-desc">Send us your proof of payment (invoice reference + transfer date) by return email — we will update your account immediately.</div></div></div>
@@ -1333,9 +1332,10 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
           </div>
           <div class="e-p">Nous vous remercions de régulariser cette situation dans les meilleurs délais. Vous trouverez en pièce jointe votre relevé de compte et les factures concernées.</div>
           <div class="e-btn-wrap"><span class="e-btn orange">Régler mes factures</span></div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimisez vos paiements</div>
           <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
             <div class="e-opt-icon">🔄</div>
-            <div><div class="e-opt-title">Évitez les prochaines relances</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
+            <div><div class="e-opt-title">Évitez les prochaines relances en activant le Direct Debit</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez-nous votre preuve de paiement (référence facture + date de virement) par retour d'email — nous mettrons à jour votre compte immédiatement.</div></div></div>
@@ -1380,9 +1380,10 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
             <div class="e-row"><span class="e-lbl">Échéance dépassée depuis</span><span class="e-val"><var>{{date_echeance}}</var></span></div>
           </div>
           <div class="e-btn-wrap"><span class="e-btn orange">Régler mes factures</span></div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimisez vos paiements</div>
           <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
             <div class="e-opt-icon">🔄</div>
-            <div><div class="e-opt-title">Évitez les prochaines relances</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
+            <div><div class="e-opt-title">Évitez les prochaines relances en activant le Direct Debit</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez-nous votre preuve de paiement (référence facture + date de virement) par retour d'email — nous mettrons à jour votre compte immédiatement.</div></div></div>
@@ -1409,9 +1410,10 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
             <div class="e-row"><span class="e-lbl">Overdue since</span><span class="e-val"><var>{{due_date}}</var></span></div>
           </div>
           <div class="e-btn-wrap"><span class="e-btn orange">Settle my invoices</span></div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimize your payments</div>
           <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
             <div class="e-opt-icon">🔄</div>
-            <div><div class="e-opt-title">Avoid future reminders</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
+            <div><div class="e-opt-title">Avoid future reminders by activating Direct Debit</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Payment already made?</div><div class="e-opt-desc">Send us your proof of payment (invoice reference + transfer date) by return email — we will update your account immediately.</div></div></div>
@@ -1461,9 +1463,10 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
             <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;"><span style="font-size:15px;flex-shrink:0;">⚠️</span><div style="font-size:12.5px;color:#991B1B;line-height:1.55;"><strong>Information importante :</strong> en l'absence de règlement, des intérêts de retard (10 % par an) ainsi que des frais de recouvrement (60 € forfaitaires) pourront être appliqués conformément à nos conditions générales.</div></div>
             <div style="border-top:1px solid #FECACA;padding-top:10px;display:flex;gap:8px;align-items:flex-start;"><span style="font-size:15px;flex-shrink:0;">📉</span><div style="font-size:12.5px;color:#9A3412;line-height:1.55;"><strong>Impact sur votre visibilité :</strong> en raison de cet impayé, la visibilité de votre établissement sur la plateforme Dayuse sera progressivement réduite jusqu'à la régularisation de votre situation.</div></div>
           </div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimisez vos paiements</div>
           <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
             <div class="e-opt-icon">🔄</div>
-            <div><div class="e-opt-title">Évitez les prochaines relances</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
+            <div><div class="e-opt-title">Évitez les prochaines relances en activant le Direct Debit</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez-nous votre preuve de paiement (référence facture + date de virement) par retour d'email — nous mettrons à jour votre compte immédiatement.</div></div></div>
@@ -1494,9 +1497,10 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
             <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;"><span style="font-size:15px;flex-shrink:0;">⚠️</span><div style="font-size:12.5px;color:#991B1B;line-height:1.55;"><strong>Important notice:</strong> if this invoice remains unpaid, late penalty interest (10% per annum) and a fixed collection fee (€60 per invoice) may be applied in accordance with our terms and conditions.</div></div>
             <div style="border-top:1px solid #FECACA;padding-top:10px;display:flex;gap:8px;align-items:flex-start;"><span style="font-size:15px;flex-shrink:0;">📉</span><div style="font-size:12.5px;color:#9A3412;line-height:1.55;"><strong>Visibility impact:</strong> due to this outstanding balance, your property's ranking on the Dayuse platform may be progressively reduced until payment is received.</div></div>
           </div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimize your payments</div>
           <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
             <div class="e-opt-icon">🔄</div>
-            <div><div class="e-opt-title">Avoid future reminders</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
+            <div><div class="e-opt-title">Avoid future reminders by activating Direct Debit</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Payment already made?</div><div class="e-opt-desc">Send us your proof of payment (invoice reference + transfer date) by return email — we will update your account immediately.</div></div></div>
@@ -1550,9 +1554,10 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
             <span class="e-warn-icon">🚨</span>
             <div>Sans règlement avant le <strong><var>{{date_limite}}</var></strong>, des intérêts de retard (taux légal + 10 points) et une indemnité forfaitaire de recouvrement de <strong>60 €</strong> s'appliqueront de plein droit — et votre dossier sera transmis à notre équipe de recouvrement avancée.</div>
           </div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimisez vos paiements</div>
           <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
             <div class="e-opt-icon">🔄</div>
-            <div><div class="e-opt-title">Évitez les prochaines relances</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
+            <div><div class="e-opt-title">Évitez les prochaines relances en activant le Direct Debit</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez-nous votre preuve de paiement (référence facture + date de virement) par retour d'email — nous mettrons à jour votre compte immédiatement.</div></div></div>
@@ -1584,9 +1589,10 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
             <span class="e-warn-icon">🚨</span>
             <div>If payment is not received by <strong><var>{{deadline}}</var></strong>, late interest (statutory rate + 10 points) and the fixed collection fee of <strong>€60</strong> will apply by right — and your file will be escalated to our advanced collections team.</div>
           </div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimize your payments</div>
           <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
             <div class="e-opt-icon">🔄</div>
-            <div><div class="e-opt-title">Avoid future reminders</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
+            <div><div class="e-opt-title">Avoid future reminders by activating Direct Debit</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Payment already made?</div><div class="e-opt-desc">Send us your proof of payment (invoice reference + transfer date) by return email — we will update your account immediately.</div></div></div>
@@ -1650,7 +1656,8 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
           </div>
           <div class="e-btn-wrap"><span class="e-btn orange">Régulariser ma situation</span></div>
           <div class="e-hr"></div>
-          <div class="e-payment-opt"><div class="e-opt-icon">💳</div><div><div class="e-opt-title">Par carte bancaire</div><div class="e-opt-desc">Portail partenaire · Section "Invoices" · Sélectionnez la facture · Cliquez sur "Pay"</div></div></div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimisez vos paiements</div>
+          <div class="e-payment-opt"><div class="e-opt-icon">🔄</div><div><div class="e-opt-title">Évitez les prochaines relances en activant le Direct Debit</div><div class="e-opt-desc">Vos factures Dayuse seront réglées automatiquement à chaque échéance, sans démarche de votre part — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div></div>
           <div class="e-payment-opt"><div class="e-opt-icon">🏦</div><div><div class="e-opt-title">Par virement bancaire</div><div class="e-opt-desc">RIB disponible en pièce jointe. Indiquez impérativement le numéro de facture en référence.</div></div></div>
           <div class="e-payment-opt"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Transmettez votre preuve de paiement par retour d'email — nous interromprons immédiatement cette procédure.</div></div></div>
           <div class="e-sign"><div class="e-sign-pre">Pour toute question relative à votre dossier, n'hésitez pas à nous contacter.</div><div class="e-sign-name">Bien à vous,</div><div class="e-sign-role">L'équipe recouvrement Dayuse</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
@@ -1694,9 +1701,10 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
           </div>
           <div class="e-warn-strip red"><span class="e-warn-icon">🚨</span><div>Sans règlement avant cette date, <strong>votre établissement sera suspendu de dayuse.com</strong> et ne sera plus visible par les voyageurs.</div></div>
           <div class="e-btn-wrap"><span class="e-btn orange">Payer maintenant</span></div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimisez vos paiements</div>
           <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
             <div class="e-opt-icon">🔄</div>
-            <div><div class="e-opt-title">Évitez les prochaines relances</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
+            <div><div class="e-opt-title">Évitez les prochaines relances en activant le Direct Debit</div><div class="e-opt-desc">Activez le <strong>Direct Debit</strong> pour un règlement automatique à chaque échéance — <a href="#" style="color:#1D4ED8;font-weight:700;">Activer →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Paiement déjà effectué ?</div><div class="e-opt-desc">Si vous avez déjà effectué votre paiement dans les dernières 48h, merci d'ignorer ce message — notre système met à jour les statuts sous 2 jours ouvrés.</div></div></div>
@@ -1739,9 +1747,10 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
           </div>
           <div class="e-warn-strip red"><span class="e-warn-icon">🚨</span><div>Without payment by this date, <strong>your property will be suspended from dayuse.com</strong> and will no longer be visible to travellers.</div></div>
           <div class="e-btn-wrap"><span class="e-btn orange">Pay now</span></div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimize your payments</div>
           <div class="e-payment-opt" style="border-bottom:none;margin:14px 0;">
             <div class="e-opt-icon">🔄</div>
-            <div><div class="e-opt-title">Avoid future reminders</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
+            <div><div class="e-opt-title">Avoid future reminders by activating Direct Debit</div><div class="e-opt-desc">Set up <strong>Direct Debit</strong> for automatic payment at every due date — <a href="#" style="color:#1D4ED8;font-weight:700;">Set up →</a></div></div>
           </div>
           <div class="e-hr"></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Already paid?</div><div class="e-opt-desc">If you have made your payment within the last 48 hours, please disregard this message — our system updates statuses within 2 business days.</div></div></div>
@@ -1840,13 +1849,10 @@ body:not(.lang-en) .email-card[data-companion-for]{display:none!important;}
             </div>
           </div>
           <div class="e-btn-wrap"><span class="e-btn orange">Settle my account</span></div>
-          <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#F9FAFB;border-radius:6px;margin:14px 0;">
-            <span style="font-size:15px;flex-shrink:0;">🔄</span>
-            <span style="font-size:12px;color:#555;line-height:1.45;flex:1;">Avoid future reminders — activate <strong style="color:#111;">Direct Debit</strong> for automatic payment on every due date.</span>
-            <span class="e-btn ghost" style="flex-shrink:0;font-size:11.5px;padding:5px 14px;margin-left:0;">Activate</span>
-          </div>
           <div class="e-hr"></div>
-          <div class="e-payment-opt"><div class="e-opt-icon">💳</div><div><div class="e-opt-title">By credit card</div><div class="e-opt-desc">Partner portal · "Invoices" section · Select the invoice · Click "Pay"</div></div></div>
+          <div style="font-size:11.5px;font-weight:700;color:#111;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Optimize your payments</div>
+          <div class="e-payment-opt"><div class="e-opt-icon">🔄</div><div><div class="e-opt-title">Avoid future reminders by activating Direct Debit</div><div class="e-opt-desc">Your Dayuse invoices will be settled automatically at each billing cycle, with no action required on your part — <a href="#" style="color:#1D4ED8;font-weight:700;">Activate →</a></div></div></div>
+          <div class="e-payment-opt"><div class="e-opt-icon">🏦</div><div><div class="e-opt-title">By bank transfer</div><div class="e-opt-desc">Our bank details are attached. Please indicate the invoice number as the payment reference.</div></div></div>
           <div class="e-payment-opt" style="border-bottom:none;"><div class="e-opt-icon">✅</div><div><div class="e-opt-title">Already paid?</div><div class="e-opt-desc">If you have made your payment within the last 48 hours, please disregard this message — our system updates statuses within 2 business days.</div></div></div>
           <div class="e-sign"><div class="e-sign-pre">For any questions regarding your account, please do not hesitate to contact us.</div><div class="e-sign-name">Kind regards,</div><div class="e-sign-role">The Dayuse Collections Team</div><div class="e-sign-contact"><a href="#">collections@dayuse.com</a> · +33 1 76 36 05 95</div></div>
         </div>
